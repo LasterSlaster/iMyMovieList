@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Comment;
+use App\Http\Resources\CommentCollection;
+use App\Http\Resources\CommentResource;
 use Illuminate\Http\Request;
 
 /**
@@ -18,7 +21,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-
+        //
     }
 
     /**
@@ -38,9 +41,18 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $movie_id)
     {
+        Movie::findOrFail($movie_id);
+        User::findOrFail($request->user_id);
 
+        $comment = new Comment();
+        $comment->user_id = $request->user_id;
+        $comment->movie_id = $movie_id;
+        $comment->text = $request->text;
+        $comment->store();
+
+        return new CommentResource($comment);
     }
 
     /**
@@ -49,9 +61,11 @@ class CommentController extends Controller
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
      */
-    public function show(Comment $comment)
+    public function show($movie_id)
     {
+        $comments = Comment::where('movie_id', $movie_id)->findOrFail();
 
+        return new CommentCollection($comments->paginate(20));
     }
 
     /**

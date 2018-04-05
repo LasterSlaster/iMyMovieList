@@ -28,6 +28,9 @@ Route::delete('/users/{user_id}/seenlist/movie({movie_id}', 'SeenListController@
 Route::get('/users', 'UserController@index');
 Route::delete('/users/{user}', 'UserController@destroy');
 
+Route::get('/movies/{movie_id}/comments/', 'CommentController@show');
+Route::post('/movies/{movie_id}/comments/', 'CommentController@store');
+
 
 /*Route::apiResource([
     'comments' => 'CommentController',
