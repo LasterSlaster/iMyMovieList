@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\SeenListMovie;
 use Illuminate\Http\Request;
 
 class SeenListController extends Controller
@@ -43,9 +44,11 @@ class SeenListController extends Controller
      * @param  SeenList $seenList
      * @return \Illuminate\Http\Response
      */
-    public function show(SeenList $seenList)
+    public function show($user_id)
     {
-        //
+        $seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
+
+        return new MovieCollection($seenList.paginate(20));
     }
 
     /**
@@ -66,9 +69,27 @@ class SeenListController extends Controller
      * @param  SeenList $seenList
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, SeenList $seenList)
+    public function update(Request $request, $user_id, $movie_id)
     {
-        //
+        $movie = Movie::find($movie_id);
+        if ($movie == null) {
+            $movie = new Movie;
+            $movie->movie_code = $movie_id;
+            $movie->movie_data = $request->movie_data;
+        }
+
+        $seenList = SeenList::where('user_id', $user_id)->get();
+
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->get();
+
+        if ($seenListMovie == null) {
+            $seenListMovie = new SeenListMovie();
+            $seenListMovie->seen_list_id = $seenList->id;
+            $seenListMovie->movie_id = $movie_id;
+        }
+
+        //TODO: implement better response
+        return new MovieResource($movie);
     }
 
     /**
@@ -77,8 +98,13 @@ class SeenListController extends Controller
      * @param  SeenList $seenList
      * @return \Illuminate\Http\Response
      */
-    public function destroy(SeenList $seenList)
+    public function destroy($user_id, $movie_id)
     {
-        //
+        $seenList = SeenList::where('user_id', $user_id); //TODO: User more destinct primary keys
+        //TODO: Merge Transactions
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->findOrFail();
+        $seenListMovie->destroy();
+
+        return Movie::find($movie_id);
     }
 }

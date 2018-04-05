@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -13,7 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::all();
+
+        return new UserCollection($users.paginate(20));
     }
 
     /**
@@ -79,6 +82,6 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //
+        $user->destroy();
     }
 }

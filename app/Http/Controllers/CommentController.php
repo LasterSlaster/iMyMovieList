@@ -4,8 +4,13 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Class CommentController
+ * @package App\Http\Controllers
+ */
 class CommentController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      *
@@ -25,6 +30,7 @@ class CommentController extends Controller
     {
         //
     }
+
 
     /**
      * Store a newly created resource in storage.

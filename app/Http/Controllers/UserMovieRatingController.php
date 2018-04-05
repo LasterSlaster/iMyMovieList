@@ -35,7 +35,13 @@ class UserMovieRatingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $userMovieRating = new UserMovieRating();
+        $userMovieRating->user_id = $request->user_id;
+        $userMovieRating->movie_id = $request->movie_id;
+        $userMovieRating->rating = $request->rating;
+        $userMovieRating->save();
+
+        return new UserMovieRatingResource($userMovieRating);
     }
 
     /**
@@ -44,9 +50,11 @@ class UserMovieRatingController extends Controller
      * @param  \App\UserMovieRating  $userMovieRating
      * @return \Illuminate\Http\Response
      */
-    public function show(UserMovieRating $userMovieRating)
+    public function show($user_id, $movie_id)
     {
-        //
+        $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->findOrFail();
+
+        return new UserMovieRatingResource($userMovieRating);
     }
 
     /**
@@ -67,9 +75,19 @@ class UserMovieRatingController extends Controller
      * @param  \App\UserMovieRating  $userMovieRating
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, UserMovieRating $userMovieRating)
+    public function update(Request $request, $user_id, $movie_id)
     {
-        //
+        $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id);
+
+        if ($userMovieRating != null) {
+            $userMovieRating->rating = $request->rating;
+        } else {
+            $userMovieRating = new UserMovieRating();
+            $userMovieRating->user_id = $user_id;
+            $userMovieRating->movie_id = $movie_id;
+            $userMovieRating->rating = $request->rating;
+            $userMovieRating->save();
+        }
     }
 
     /**

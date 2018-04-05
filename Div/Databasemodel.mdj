@@ -2796,12 +2796,12 @@
 										},
 										{
 											"_type": "UMLAttributeView",
-											"_id": "AAAAAAFici/PZLkQ7Aw=",
+											"_id": "AAAAAAFilhTQX0gu5bk=",
 											"_parent": {
 												"$ref": "AAAAAAFici9hHrhfvlM="
 											},
 											"model": {
-												"$ref": "AAAAAAFici/PTLkH6Pk="
+												"$ref": "AAAAAAFilhTQDEglcjg="
 											},
 											"visible": true,
 											"enabled": true,
@@ -2818,7 +2818,7 @@
 											"height": 13,
 											"autoResize": false,
 											"underline": false,
-											"text": "+Rating",
+											"text": "+MovieData",
 											"horizontalAlignment": 0,
 											"verticalAlignment": 5,
 											"wordWrap": false
@@ -8717,6 +8717,7 @@
 							"visibility": "public",
 							"isStatic": false,
 							"isLeaf": false,
+							"type": "",
 							"isReadOnly": false,
 							"isOrdered": false,
 							"isUnique": false,
@@ -8726,15 +8727,14 @@
 						},
 						{
 							"_type": "UMLAttribute",
-							"_id": "AAAAAAFici/PTLkH6Pk=",
+							"_id": "AAAAAAFilhTQDEglcjg=",
 							"_parent": {
 								"$ref": "AAAAAAFici9hHbhXoRg="
 							},
-							"name": "Rating",
+							"name": "MovieData",
 							"visibility": "public",
 							"isStatic": false,
 							"isLeaf": false,
-							"type": "",
 							"isReadOnly": false,
 							"isOrdered": false,
 							"isUnique": false,
@@ -8902,6 +8902,7 @@
 							"visibility": "public",
 							"isStatic": false,
 							"isLeaf": false,
+							"type": "",
 							"isReadOnly": false,
 							"isOrdered": false,
 							"isUnique": false,
@@ -8952,6 +8953,7 @@
 							"visibility": "public",
 							"isStatic": false,
 							"isLeaf": false,
+							"type": "",
 							"isReadOnly": false,
 							"isOrdered": false,
 							"isUnique": false,
