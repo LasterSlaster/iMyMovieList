@@ -82,6 +82,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        //TODO: First delete dependent rows / implement logic in Model class
         $user->delete();
     }
 }
