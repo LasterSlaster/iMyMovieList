@@ -56,9 +56,9 @@ class WatchListController extends Controller
      */
     public function show($user_id)
     {
-        $watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->get();
+        $watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
 
-        return new MovieCollection($watchList.paginate(20));
+        return new MovieCollection($watchList);
     }
 
     /**
