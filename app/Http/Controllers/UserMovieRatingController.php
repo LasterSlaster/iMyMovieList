@@ -47,7 +47,8 @@ class UserMovieRatingController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\UserMovieRating  $userMovieRating
+     * @param  int $user_id
+     * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
     public function show($user_id, $movie_id)
@@ -72,7 +73,8 @@ class UserMovieRatingController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\UserMovieRating  $userMovieRating
+     * @param  int $user_id
+     * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $user_id, $movie_id)

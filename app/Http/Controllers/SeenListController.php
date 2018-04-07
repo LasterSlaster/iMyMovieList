@@ -41,7 +41,7 @@ class SeenListController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  SeenList $seenList
+     * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
     public function show($user_id)
@@ -66,11 +66,13 @@ class SeenListController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  SeenList $seenList
+     * @param  int $user_id
+     * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $user_id, $movie_id)
     {
+        //Check if the movie is in watch list and remove it
         $movie = Movie::find($movie_id);
         if ($movie == null) {
             $movie = new Movie;
@@ -95,7 +97,8 @@ class SeenListController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  SeenList $seenList
+     * @param int $user_id
+     * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
     public function destroy($user_id, $movie_id)

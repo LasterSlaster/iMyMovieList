@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
+/**
+ * Class WatchListController
+ * @package App\Http\Controllers
+ */
 class WatchListController extends Controller
 {
     /**
@@ -40,12 +44,14 @@ class WatchListController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  WatchList $watchList
+     * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function show(WatchList $watchList)
+    public function show($user_id)
     {
-        //
+        $watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->get();
+
+        return new MovieCollection($watchList.paginate(20));
     }
 
     /**
@@ -63,22 +69,47 @@ class WatchListController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  WatchList $watchList
+     * @param  int $user_id
+     * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, WatchList $watchList)
+    public function update(Request $request, $user_id, $movie_id)
     {
-        //
+        $movie = Movie::find($movie_id);
+        if ($movie == null) {
+            $movie = new Movie;
+            $movie->movie_code = $movie_id;
+            $movie->movie_data = $request->movie_data;
+        }
+
+        $watchList = WatchList::where('user_id', $user_id)->get();
+
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->get();
+
+        if ($watchListMovie == null) {
+            $watchListMovie = new SeenListMovie();
+            $watchListMovie->seen_list_id = $watchList->id;
+            $watchListMovie->movie_id = $movie_id;
+        }
+
+        //TODO: implement better response
+        return new MovieResource($movie);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  WatchList $watchList
+     * @param  int $user_id
+     * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(WatchList $watchList)
+    public function destroy($user_id, $movie_id)
     {
-        //
+        $watchList = WatchList::where('user_id', $user_id); //TODO: User more destinct primary keys
+        //TODO: Merge Transactions
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->findOrFail();
+        $watchListMovie->destroy();
+
+        return Movie::find($movie_id);
     }
 }
