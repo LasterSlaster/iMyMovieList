@@ -3,6 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Resources\MovieCollection;
+use App\Http\Resources\MovieResource;
+use App\WatchList;
+use App\WatchListMovie;
+use App\Movie;
+
 
 /**
  * Class WatchListController
@@ -87,7 +94,7 @@ class WatchListController extends Controller
         $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->get();
 
         if ($watchListMovie == null) {
-            $watchListMovie = new SeenListMovie();
+            $watchListMovie = new WatchListMovie();
             $watchListMovie->seen_list_id = $watchList->id;
             $watchListMovie->movie_id = $movie_id;
         }

@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\SeenListMovie;
+use App\SeenList;
+use App\Movie;
+use App\HTTP\Resources\MovieResource;
+use App\Http\Resources\MovieCollection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 
 class SeenListController extends Controller

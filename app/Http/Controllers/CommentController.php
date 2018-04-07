@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Comment;
+use App\User;
+use App\Movie;
 use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use Illuminate\Http\Request;

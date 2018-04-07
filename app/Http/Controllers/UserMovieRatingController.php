@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\UserMovieRating;
+use App\HTTP\Resources\UserMovieRatingResource;
 use Illuminate\Http\Request;
 
 class UserMovieRatingController extends Controller
