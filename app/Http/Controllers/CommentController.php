@@ -65,9 +65,9 @@ class CommentController extends Controller
      */
     public function show($movie_id)
     {
-        $comments = Comment::where('movie_id', $movie_id)->get();
+        $comments = Comment::where('movie_id', $movie_id)->paginate(20);
 
-        return new CommentCollection($comments->paginate(20));
+        return new CommentCollection($comments);
     }
 
     /**
