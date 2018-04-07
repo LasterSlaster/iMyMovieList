@@ -17,7 +17,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingsController@show');
+Route::get('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@show');
 Route::post('/users/usermovieratings/', 'UserMovieRatingController@store');
 Route::put('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@update');
 
