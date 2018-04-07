@@ -54,7 +54,7 @@ class UserMovieRatingController extends Controller
      */
     public function show($user_id, $movie_id)
     {
-        $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->findOrFail();
+        $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->get();
 
         return new UserMovieRatingResource($userMovieRating);
     }
