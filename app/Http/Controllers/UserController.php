@@ -17,7 +17,7 @@ class UserController extends Controller
     {
         $users = User::all();
 
-        return new UserCollection($users.paginate(20));
+        return new UserCollection($users->paginate(20));
     }
 
     /**
