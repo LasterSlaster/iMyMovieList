@@ -1,23 +1,48 @@
-Heroku URL:
-
 Routes:
-get('/users/{user_id}/usermovieratings/{movie_id}');
-post('/users/usermovieratings/');
-put('/users/{user_id}/usermovieratings/{movie_id}');
+get('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@show');
+post('/users/usermovieratings/', 'UserMovieRatingController@store');
+put('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@update');
 
-get('/seenlists');
-get('/users/{user_id}/seenlist/');
-put('/users/{user_id}/seenlist/movie/{movie_id}');
-delete('/users/{user_id}/seenlist/movie({movie_id}');
+get('/seenlists', 'SeenListController@index');
+get('/users/{user_id}/seenlist/', 'SeenListController@show');
+put('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@update');
+delete('/users/{user_id}/seenlist/movie({movie_id}', 'SeenListController@delete');
 
-get('/watchlists');
-get('/users/{user_id}/watchlist/');
-put('/users/{user_id}/watchlist/movie/{movie_id}');
-delete('/users/{user_id}/watchlist/movie({movie_id}');
+get('/watchlists', 'WatchListController@index');
+get('/users/{user_id}/watchlist/', 'WatchListController@show');
+put('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@update');
+delete('/users/{user_id}/watchlist/movie({movie_id}', 'WatchListController@delete');
 
-get('/users');
-get('/users/{user}');
-delete('/users/{user}');
+get('/users', 'UserController@index');
+get('/users/{user}', 'UserController@show');
+patch('/users/{user_id}', 'UserController@update');
+delete('/users/{user}', 'UserController@destroy');
 
-get('/movies/{movie_id}/comments/');
-post('/movies/{movie_id}/comments/');
+get('/comments', 'CommentController@index');
+get('/movies/{movie_id}/comments', 'CommentController@indexMovieComments');
+get('/users/{user_id}/comments', 'CommentController@indexUserComments');
+get('/comments/{comment}', 'CommentController@show');
+post('/comments', 'CommentController@storeMovieComment');
+put('/users/{user_id}/movies/{movie_id}/comments/{comment_id}', 'CommentController@update');
+
+get('/movies', 'MovieController@index');
+get('/movies/{movie}', 'MovieController@show');
+post('/movies', 'MovieController@store');
+put('/movies/{movie_id}', 'MovieController@update');
+
+
+README
+!!!!!!!!!!!!
+Der Name der Methode gibt die HTTP Methode an.
+Der erste String bestimmt die URL für die Anfrage.
+Der zweite String gibt den Controller und dessen Methode für die Anfrage an.
+
+Die in {} stehenden Variablen stehen für die IDs der Ressourcen (Beispieldaten beginnen immer mit 1 ...)
+
+Die Formate für POST/PUT/PATCH Anfragen dokumentiere ich noch und implementiere
+eine responce bei einer GET Anfrage an die jeweilige URL.
+Prinzipiell ist hier ein einfaches json Objekt gefragt welches Attribute mit den Spaltennamen der Datenbanktabellen enthält.
+Vorerst kannst du dir also diese aus dem Sourcecode herausziehen und mal testen bzw. in den jeweiligen Controller hineinsehen.
+Daraus sollte ersichtlich sein welche Daten wie gefordert sind.
+Die COntroller Klassen befinden sich unter /app/http/controllers/
+!!!!!!!!!!!!
