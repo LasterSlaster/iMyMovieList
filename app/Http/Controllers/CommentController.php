@@ -23,7 +23,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $comments = Comment::all()->paginate(20);
+        $comments = Comment::paginate(20);
 
         return new CommentCollection($comments);
     }
@@ -93,25 +93,11 @@ class CommentController extends Controller
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
      */
-    public function showMovieComments($movie_id, $comment_id)
+    public function show(Comment $comment)
     {
-        $comments = Comment::where('movie_id', $movie_id)->paginate(20);
-
-        return new CommentCollection($comments);
+        return new CommentResource($comment);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  Comment $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function showUserComments($user_id, $comment_id)
-    {
-        $comments = Comment::where('user_id', $user_id)->paginate(20);
-
-        return new CommentCollection($comments);
-    }
 
     /**
      * Show the form for editing the specified resource.

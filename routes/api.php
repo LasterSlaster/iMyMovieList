@@ -38,13 +38,13 @@ Route::delete('/users/{user}', 'UserController@destroy');
 
 Route::get('/comments', 'CommentController@index');
 Route::get('/movies/{movie_id}/comments', 'CommentController@indexMovieComments');
-Route::get('/users/{user_id}/comments', 'CommentsController@indexUserComments');
-Route::get('/comments/{comment_id}', 'CommentController@show');
+Route::get('/users/{user_id}/comments', 'CommentController@indexUserComments');
+Route::get('/comments/{comment}', 'CommentController@show');
 Route::post('/comments', 'CommentController@storeMovieComment');
 Route::put('/users/{user_id}/movies/{movie_id}/comments/{comment_id}', 'CommentController@update');
 
 Route::get('/movies', 'MovieController@index');
-Route::get('/movies/{movie_id}', 'MovieController@show');
+Route::get('/movies/{movie}', 'MovieController@show');
 Route::post('/movies', 'MovieController@store');
 Route::put('/movies/{movie_id}', 'MovieController@update');
 

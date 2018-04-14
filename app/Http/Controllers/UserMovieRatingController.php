@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\UserMovieRating;
-use App\HTTP\Resources\UserMovieRatingResource;
+use App\Http\Resources\UserMovieRatingResource;
 use Illuminate\Http\Request;
 
 class UserMovieRatingController extends Controller
@@ -55,7 +55,7 @@ class UserMovieRatingController extends Controller
     public function show($user_id, $movie_id)
     {
         $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->first();
-
+        // implement return http error code for null objects
         return new UserMovieRatingResource($userMovieRating);
     }
 
