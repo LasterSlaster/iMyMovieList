@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use App\SeenListMovie;
 use App\SeenList;
 use App\Movie;
-use App\HTTP\Resources\MovieResource;
+use App\Http\Resources\MovieResource;
 use App\Http\Resources\MovieCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use App\Http\Resources\SeenListCollection;
+use App\User;
 
 class SeenListController extends Controller
 {
@@ -19,7 +21,7 @@ class SeenListController extends Controller
      */
     public function index()
     {
-        //
+        return new SeenListCollection(SeenList::paginate(20));
     }
 
     /**
@@ -51,9 +53,10 @@ class SeenListController extends Controller
      */
     public function show($user_id)
     {
-        $seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
+        //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
+        $seenList = User::find($user_id)->seenList()->first();
 
-        return new MovieCollection($seenList.paginate(20));
+        return new MovieCollection($seenList->movies()->paginate(20));
     }
 
     /**

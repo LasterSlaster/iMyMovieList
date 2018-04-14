@@ -9,6 +9,8 @@ use App\Http\Resources\MovieResource;
 use App\WatchList;
 use App\WatchListMovie;
 use App\Movie;
+use App\User;
+use App\Http\Resources\WatchListCollection;
 
 
 /**
@@ -24,7 +26,7 @@ class WatchListController extends Controller
      */
     public function index()
     {
-        //
+        return new WatchListCollection(WatchList::paginate(20));
     }
 
     /**
@@ -56,10 +58,10 @@ class WatchListController extends Controller
      */
     public function show($user_id)
     {
-        $watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
+        //$watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
+        $watchList = User::find($user_id)->watchList()->first();
 
-        //TODO: Create Collection class for custom DB call above
-        return new MovieCollection($watchList);
+        return new MovieCollection($watchList->movies()->paginate(20));
     }
 
     /**
@@ -83,11 +85,13 @@ class WatchListController extends Controller
      */
     public function update(Request $request, $user_id, $movie_id)
     {
+        //TODO: Rewrite this method
         $movie = Movie::find($movie_id);
         if ($movie == null) {
             $movie = new Movie;
             $movie->movie_code = $movie_id;
             $movie->movie_data = $request->movie_data;
+            $movie->save();
         }
 
         $watchList = WatchList::where('user_id', $user_id)->get();

@@ -18,7 +18,6 @@ class CreateMoviesTable extends Migration
             $table->timestamps();
             $table->string('movie_code');
             $table->json('movie_data');
-            $table->integer('rating');
         });
     }
 

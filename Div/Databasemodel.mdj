@@ -1366,7 +1366,7 @@
 									},
 									"edgePosition": 1,
 									"underline": false,
-									"text": "+1  N",
+									"text": "+1  1",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -1788,7 +1788,7 @@
 									},
 									"edgePosition": 1,
 									"underline": false,
-									"text": "+1  N",
+									"text": "+1  1",
 									"horizontalAlignment": 2,
 									"verticalAlignment": 5,
 									"wordWrap": false
@@ -7447,7 +7447,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFicf3AEaW3iOw="
 							},
-							"name": "1  N",
+							"name": "1  1",
 							"end1": {
 								"_type": "UMLAssociationEnd",
 								"_id": "AAAAAAFiciJ69abhdck=",
@@ -8076,7 +8076,7 @@
 							"_parent": {
 								"$ref": "AAAAAAFicg8opKYUtj4="
 							},
-							"name": "1  N",
+							"name": "1  1",
 							"end1": {
 								"_type": "UMLAssociationEnd",
 								"_id": "AAAAAAFiciJjBKaY8ms=",
@@ -8735,6 +8735,7 @@
 							"visibility": "public",
 							"isStatic": false,
 							"isLeaf": false,
+							"type": "",
 							"isReadOnly": false,
 							"isOrdered": false,
 							"isUnique": false,

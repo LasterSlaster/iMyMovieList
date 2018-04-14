@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\User;
 use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
+use App\Http\Resources\UserResource;
 
 class UserController extends Controller
 {
@@ -15,7 +16,6 @@ class UserController extends Controller
      */
     public function index()
     {
-
         return new UserCollection(User::paginate(20));
     }
 
@@ -48,7 +48,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return new UserResource($user);
     }
 
     /**
@@ -71,7 +71,10 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        $user->role = $request->role;
+        $user->save();
+
+        return new UserResource($user);
     }
 
     /**
@@ -82,7 +85,14 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //TODO: First delete dependent rows / implement logic in Model class
+        //TODO: Also check out a solution to define a cascade deletion in the migration class
+        //Instead of deleting the user and all dependent entries try laravel soft delition
+        $user->seenList()->delete();
+        $user->watchList()->delete();
+        $user->userMovieRatings()->delete();
+        $user->comments()->delete();
         $user->delete();
+
+        return new UserResource($user);
     }
 }

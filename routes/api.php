@@ -21,20 +21,32 @@ Route::get('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingContr
 Route::post('/users/usermovieratings/', 'UserMovieRatingController@store');
 Route::put('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@update');
 
+Route::get('/seenlists', 'SeenListController@index');
 Route::get('/users/{user_id}/seenlist/', 'SeenListController@show');
 Route::put('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@update');
 Route::delete('/users/{user_id}/seenlist/movie({movie_id}', 'SeenListController@delete');
 
+Route::get('/watchlists', 'WatchListController@index');
 Route::get('/users/{user_id}/watchlist/', 'WatchListController@show');
 Route::put('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@update');
 Route::delete('/users/{user_id}/watchlist/movie({movie_id}', 'WatchListController@delete');
 
 Route::get('/users', 'UserController@index');
+Route::get('/users/{user}', 'UserController@show');
+Route::patch('/users/{user_id}', 'UserController@update');
 Route::delete('/users/{user}', 'UserController@destroy');
 
-Route::get('/movies/{movie_id}/comments/', 'CommentController@show');
-Route::post('/movies/{movie_id}/comments/', 'CommentController@store');
+Route::get('/comments', 'CommentController@index');
+Route::get('/movies/{movie_id}/comments', 'CommentController@indexMovieComments');
+Route::get('/users/{user_id}/comments', 'CommentsController@indexUserComments');
+Route::get('/comments/{comment_id}', 'CommentController@show');
+Route::post('/comments', 'CommentController@storeMovieComment');
+Route::put('/users/{user_id}/movies/{movie_id}/comments/{comment_id}', 'CommentController@update');
 
+Route::get('/movies', 'MovieController@index');
+Route::get('/movies/{movie_id}', 'MovieController@show');
+Route::post('/movies', 'MovieController@store');
+Route::put('/movies/{movie_id}', 'MovieController@update');
 
 /*Route::apiResource([
     'comments' => 'CommentController',

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MovieCollection;
+use App\Http\Resources\MovieResource;
 use Illuminate\Http\Request;
 use App\Movie;
 
@@ -14,7 +16,7 @@ class MovieController extends Controller
      */
     public function index()
     {
-        //
+        return new MovieCollection(User::paginate(20));
     }
 
     /**
@@ -35,7 +37,12 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $movie = new Movie();
+        $movie->movie_code = $request->movie_code;
+        $movie->movie_data = $request->movie_data;
+        $movie->save();
+
+        return new MovieResource($movie);
     }
 
     /**
@@ -46,7 +53,8 @@ class MovieController extends Controller
      */
     public function show(Movie $movie)
     {
-        //
+        //TODO: Check if an error http is send when no movie is found or if null is returned
+        return new MovieResource($movie);
     }
 
     /**
@@ -69,7 +77,15 @@ class MovieController extends Controller
      */
     public function update(Request $request, Movie $movie)
     {
-        //
+        if ($movie == null) {
+            $movie = new Movie();
+        }
+
+        $movie->movie_code = $request->movie_code;
+        $movie->movie_data = $request->movie_data;
+        $movie->save();
+
+        return new MovieResource($movie);
     }
 
     /**

@@ -2,9 +2,9 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class SeenListMovie extends Model
+class SeenListMovie extends Pivot
 {
     public $timestamps = false;
 }

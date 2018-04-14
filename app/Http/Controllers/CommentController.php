@@ -23,8 +23,38 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        $comments = Comment::all()->paginate(20);
+
+        return new CommentCollection($comments);
     }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  Comment $comment
+     * @return \Illuminate\Http\Response
+     */
+    public function indexMovieComments($movie_id)
+    {
+        $comments = Comment::where('movie_id', $movie_id)->paginate(20);
+
+        return new CommentCollection($comments);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  Comment $comment
+     * @return \Illuminate\Http\Response
+     */
+    public function indexUserComments($user_id)
+    {
+        $comments = Comment::where('user_id', $user_id)->paginate(20);
+
+        return new CommentCollection($comments);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -43,14 +73,14 @@ class CommentController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $movie_id)
+    public function store(Request $request)
     {
-        Movie::findOrFail($movie_id);
+        Movie::findOrFail($request->movie_id);
         User::findOrFail($request->user_id);
 
         $comment = new Comment();
         $comment->user_id = $request->user_id;
-        $comment->movie_id = $movie_id;
+        $comment->movie_id = $request->movie_id;
         $comment->text = $request->text;
         $comment->store();
 
@@ -63,9 +93,22 @@ class CommentController extends Controller
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
      */
-    public function show($movie_id)
+    public function showMovieComments($movie_id, $comment_id)
     {
         $comments = Comment::where('movie_id', $movie_id)->paginate(20);
+
+        return new CommentCollection($comments);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  Comment $comment
+     * @return \Illuminate\Http\Response
+     */
+    public function showUserComments($user_id, $comment_id)
+    {
+        $comments = Comment::where('user_id', $user_id)->paginate(20);
 
         return new CommentCollection($comments);
     }
@@ -88,9 +131,21 @@ class CommentController extends Controller
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Comment $comment)
+    public function update(Request $request, $user_id, $movie_id, $comment_id)
     {
-        //
+        //TODO: Check result for not existing comments
+        $comment = Comment::find($comment_id);
+
+        if ($comment == null) {
+            $comment = new Comment();
+        }
+
+        $comment->user_id = $request->user_id;
+        $comment->movie_id = $request->movie_id;
+        $comment->comment_text = $request->comment_text;
+        $comment->save();
+
+        return new CommentController($comment);
     }
 
     /**
