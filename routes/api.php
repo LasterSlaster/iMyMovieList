@@ -24,12 +24,12 @@ Route::put('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingContr
 Route::get('/seenlists', 'SeenListController@index');
 Route::get('/users/{user_id}/seenlist/', 'SeenListController@show');
 Route::put('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@update');
-Route::delete('/users/{user_id}/seenlist/movie({movie_id}', 'SeenListController@delete');
+Route::delete('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@delete');
 
 Route::get('/watchlists', 'WatchListController@index');
 Route::get('/users/{user_id}/watchlist/', 'WatchListController@show');
 Route::put('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@update');
-Route::delete('/users/{user_id}/watchlist/movie({movie_id}', 'WatchListController@delete');
+Route::delete('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@delete');
 
 Route::get('/users', 'UserController@index');
 Route::get('/users/{user}', 'UserController@show');
