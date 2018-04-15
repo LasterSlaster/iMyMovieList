@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class Movie extends Model
 {
+
+    /**
+     * The attributes that should be casted to native types.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'movie_data' => 'array',
+    ];
+
     public function comments() {
         return $this->hasMany('App\Comment');
     }
