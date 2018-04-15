@@ -7,7 +7,7 @@ $factory->define(App\Movie::class, function (Faker $faker) {
     return [
         'movie_code' => $faker->randomDigitNotNull,
         'movie_data' => $faker->randomElement($movieData),
-        "seen_total" => $faker->randomDigit,
-        "watch_total" => $faker->randomDigit
+        'seen_total' => $faker->randomDigit,
+        'watch_total' => $faker->randomDigit
     ];
 });
