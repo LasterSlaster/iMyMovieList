@@ -80,12 +80,16 @@ class SeenListController extends Controller
      */
     public function update(Request $request, $user_id, $movie_id)
     {
-        //Check if the movie is in watch list and remove it
+        //TODO:Check if the movie is in watch list and remove it
+        //TODO: use pu only for update otherwiese fail
         $movie = Movie::find($movie_id);
         if ($movie == null) {
             $movie = new Movie;
             $movie->movie_code = $movie_id;
             $movie->movie_data = $request->movie_data;
+            $movie->watch_total = 0;
+            $movie->seen_total = 0;
+            $movie->save();
         }
 
         $seenList = SeenList::where('user_id', $user_id)->get();
@@ -111,11 +115,11 @@ class SeenListController extends Controller
      */
     public function destroy($user_id, $movie_id)
     {
-        $seenList = SeenList::where('user_id', $user_id); //TODO: User more destinct primary keys
+        $seenList = SeenList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
         //TODO: Merge Transactions
-        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->findOrFail();
-        $seenListMovie->destroy();
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->first();
+        $seenListMovie->delete();
 
-        return Movie::find($movie_id);
+        return new MovieResource($seenListMovie);
     }
 }

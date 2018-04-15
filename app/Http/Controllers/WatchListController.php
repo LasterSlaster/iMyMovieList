@@ -91,6 +91,8 @@ class WatchListController extends Controller
             $movie = new Movie;
             $movie->movie_code = $movie_id;
             $movie->movie_data = $request->movie_data;
+            $movie->watch_total = 0;
+            $movie->seen_total = 0;
             $movie->save();
         }
 
@@ -117,11 +119,11 @@ class WatchListController extends Controller
      */
     public function destroy($user_id, $movie_id)
     {
-        $watchList = WatchList::where('user_id', $user_id); //TODO: User more destinct primary keys
+        $watchList = WatchList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
         //TODO: Merge Transactions
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->findOrFail();
-        $watchListMovie->destroy();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->first();
+        $watchListMovie->delete();
 
-        return Movie::find($movie_id);
+        return new MovieResource($watchListMovie);
     }
 }

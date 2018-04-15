@@ -14,11 +14,12 @@ class CreateWatchListMoviesTable extends Migration
     public function up()
     {
         Schema::create('watch_list_movies', function (Blueprint $table) {
+            $table->increments('id');
             $table->unsignedInteger('watch_list_id');
             $table->foreign('watch_list_id')->references('id')->on('watch_lists');
             $table->unsignedInteger('movie_id');
             $table->foreign('movie_id')->references('id')->on('movies');
-            $table->primary(['watch_list_id', 'movie_id']);
+            $table->unique(['watch_list_id', 'movie_id']);
         });
     }
 
