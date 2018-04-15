@@ -29,7 +29,7 @@ Route::delete('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@
 Route::get('/watchlists', 'WatchListController@index');
 Route::get('/users/{user_id}/watchlist/', 'WatchListController@show');
 Route::put('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@update');
-Route::delete('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@delete');
+Route::delete('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@destroy');
 
 Route::get('/users', 'UserController@index');
 Route::get('/users/{user}', 'UserController@show');
