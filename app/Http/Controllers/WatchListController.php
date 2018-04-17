@@ -96,7 +96,7 @@ class WatchListController extends Controller
             $movie->save();
         }
 
-        $watchList = WatchList::where('user_id', $user_id)->get();
+        $watchList = WatchList::where('user_id', $user_id)->first();
 
         $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->get();
 
@@ -104,6 +104,7 @@ class WatchListController extends Controller
             $watchListMovie = new WatchListMovie();
             $watchListMovie->seen_list_id = $watchList->id;
             $watchListMovie->movie_id = $movie_id;
+            $watchListMovie->save();
         }
 
         //TODO: implement better response

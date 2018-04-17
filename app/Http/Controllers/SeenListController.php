@@ -92,7 +92,7 @@ class SeenListController extends Controller
             $movie->save();
         }
 
-        $seenList = SeenList::where('user_id', $user_id)->get();
+        $seenList = SeenList::where('user_id', $user_id)->first();
 
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->get();
 
@@ -100,6 +100,7 @@ class SeenListController extends Controller
             $seenListMovie = new SeenListMovie();
             $seenListMovie->seen_list_id = $seenList->id;
             $seenListMovie->movie_id = $movie_id;
+            $seenListMovie->save();
         }
 
         //TODO: implement better response
