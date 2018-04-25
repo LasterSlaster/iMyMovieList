@@ -16,16 +16,25 @@ class UserController extends Controller
     public function signup(Request $request) {
         $this->validate($request, [
             'name' => 'required',
+            'surname' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required'
         ]);
 
         $user = new User([
             'name' => $request->input('name'),
+            'surname' => $request->input('surname'),
             'email' => $request->input('email'),
-            'passwork' => bcrypt($request->input('password'))
+            'password' => bcrypt($request->input('password'))
         ]);
         $user->save();
+
+        $seenList = new SeenList([
+            'user_id' => $user->id
+        ]);
+        $watchList = new WatchList([
+            'user_id' => $user->id
+        ]);
         return response()->json([
             'message' => 'Successfully created user!'
         ], 201);
@@ -34,6 +43,7 @@ class UserController extends Controller
     public function signin(Request $request) {
         $this->validate($request, [
             'name' => 'required',
+            'surname' => 'required',
             'email' => 'required|email',
             'password' => 'required'
         ]);
@@ -116,7 +126,10 @@ class UserController extends Controller
      */
     public function update(Request $request, $user_id)
     {
-        //$user = JWTAuth::parseToken()->toUser();
+        $authUser = JWTAuth::parseToken()->toUser();
+        if ($authUser->role != 'admin') {
+            return Response::create('Not authoritzed to access this resource', 403);
+        }
         $user = User::findOrFail($user_id);
         //Validation
         if ($request->role == null && ($request->role != 'admin' || $request->role != 'user'))
@@ -136,6 +149,10 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
+        $authUser = JWTAuth::parseToken()->toUser();
+        if ($authUser->id != $user->id || $authUser->role != 'admin') {
+            return Response::create('Not authorized to access this resource', 403);
+        }
         //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model
         //Instead of deleting the user and all dependent entries try laravel soft delition
         $user->seenList()->delete();

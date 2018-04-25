@@ -55,8 +55,14 @@ class SeenListController extends Controller
      */
     public function show($user_id)
     {
+        //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
         //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
-        $seenList = User::find($user_id)->seenList()->first();
+        $seenList = User::find($user_id)->seenList;
 
         if ($seenList == null)
             return Response::create('No such resource!',404);
@@ -88,6 +94,11 @@ class SeenListController extends Controller
         //TODO: Rewrite this method!!!
 
         //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
         if ($request->movie_id != $movie_id)
             return Response::create('json attribute movie_id and URL keyare not the same!',400);
 
@@ -140,6 +151,12 @@ class SeenListController extends Controller
      */
     public function destroy($user_id, $movie_id)
     {
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
+
         $seenList = SeenList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
 
         if ($seenList == null)

@@ -42,6 +42,12 @@ class UserMovieRatingController extends Controller
             return Response::create('JSON body must contain attributes movie_id, user_id and rating', 422);
         if (Movie::find($request->user_id) == null || User::find($request->movie_id) == null)
             return Response::create('User or movie id is not valid', 422);
+
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $request->user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
         //TODO: Validate that rating is an interger within the range
 
         $userMovieRating = new UserMovieRating();
@@ -92,6 +98,11 @@ class UserMovieRatingController extends Controller
     public function update(Request $request, $user_id, $movie_id)
     {
         //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
         if ($request->user_id != $user_id && $request->movie_id != $movie_id)
             return Response::create('URL parameter movie_id and user_id must be equal to json body attributes', 422);
 

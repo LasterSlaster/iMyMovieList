@@ -59,6 +59,13 @@ class CommentController extends Controller
      */
     public function indexUserComments($user_id)
     {
+        //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
+
         $comments = Comment::where('user_id', $user_id)->paginate(20);
 
         if ($comments == null)
@@ -87,8 +94,14 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        //Validation
         if ($request->movie_id == null || $request->user_id == null)
             return Response::create('JSON must contain a movie_id and a user_id', 422);
+
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $request->user_id)
+            return Response::create('Not authorized to access this resource', 403);
 
         $relatedMovie = Movie::find($request->movie_id);
         $relatedUser = User::find($request->user_id);

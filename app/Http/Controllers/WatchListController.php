@@ -59,8 +59,14 @@ class WatchListController extends Controller
      */
     public function show($user_id)
     {
+        //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
         //$watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
-        $watchList = User::find($user_id)->watchList()->first();
+        $watchList = User::find($user_id)->watchList;
 
         if ($watchList == null)
             return Response::create('No such resource!',404);
@@ -92,7 +98,12 @@ class WatchListController extends Controller
         //TODO: Rewrite this method
 
         //Validation
-         if ($request->movie_id != $movie_id)
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
+        if ($request->movie_id != $movie_id)
              return Response::create('json attribute movie_id and URL keyare not the same!',400);
 
          if ($request->movie_data != '') {
@@ -144,6 +155,12 @@ class WatchListController extends Controller
      */
     public function destroy($user_id, $movie_id)
     {
+        //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
         $watchList = WatchList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
 
         if ($watchList == null)

@@ -1,6 +1,8 @@
 <?PHP
 
 use Illuminate\Database\Seeder;
+use App\WatchList;
+use App\SeenList;
 
 class UsersTableSeeder extends Seeder
 {
@@ -11,6 +13,10 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\User::class, 50)->create();
+        factory(App\User::class, 50)->create()
+            ->each(function($u) {
+                $u->watchList()->save(new WatchList(['user_id' => $u->id]));
+                $u->seenList()->save(new SeenList(['user_id' => $u->id]));
+            });
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\SeenListMovie;
 
 class SeenListMoviesTableSeeder extends Seeder
 {
@@ -11,11 +12,6 @@ class SeenListMoviesTableSeeder extends Seeder
      */
     public function run()
     {
-        foreach (range(1, 50) as $index) {
-            DB::table('seen_list_movies')->insert([
-                'seen_list_id' => factory(App\SeenList::class)->create()->id,
-                'movie_id' => factory(App\Movie::class)->create()->id,
-            ]);
-        }
+        factory(SeenListMovie::class, 50)->create();
     }
 }
