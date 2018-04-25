@@ -6,6 +6,7 @@ use App\User;
 use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
+use Illuminate\Http\Response;
 
 class UserController extends Controller
 {
@@ -69,12 +70,17 @@ class UserController extends Controller
      * @param  User $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, $user_id)
     {
+        $user = User::findOrFail($user_id);
+        //Validation
+        if ($request->role == null && ($request->role != 'admin' || $request->role != 'user'))
+            return Response::create('JSON body must contain attribute role. Possible values: admin|user', 422);
+
         $user->role = $request->role;
         $user->save();
 
-        return new UserResource($user);
+        return (new UserResource($user))->response()->setStatusCode(201);
     }
 
     /**
@@ -85,7 +91,7 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        //TODO: Also check out a solution to define a cascade deletion in the migration class
+        //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model
         //Instead of deleting the user and all dependent entries try laravel soft delition
         $user->seenList()->delete();
         $user->watchList()->delete();
@@ -93,6 +99,6 @@ class UserController extends Controller
         $user->comments()->delete();
         $user->delete();
 
-        return new UserResource($user);
+        return (new UserResource($user))->response()->setStatusCode(200);
     }
 }

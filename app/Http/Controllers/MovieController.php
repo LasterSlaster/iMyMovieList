@@ -6,6 +6,7 @@ use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use Illuminate\Http\Request;
 use App\Movie;
+use Illuminate\Http\Response;
 
 class MovieController extends Controller
 {
@@ -37,12 +38,17 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
+        //Validation
+        if ($request->movie_code == null || $request->movie_data == null)
+            return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
+        //TODO: Validate movie_code and movie_data for semantics
+
         $movie = new Movie();
         $movie->movie_code = $request->movie_code;
         $movie->movie_data = $request->movie_data;
         $movie->save();
 
-        return new MovieResource($movie);
+        return (new MovieResource($movie))->response()->setStatusCode(201);
     }
 
     /**
@@ -53,7 +59,7 @@ class MovieController extends Controller
      */
     public function show(Movie $movie)
     {
-        //TODO: Check if an error http is send when no movie is found or if null is returned
+        //TODO: Check behavior for non existing movie_ids - exception or null?
         return new MovieResource($movie);
     }
 
@@ -75,17 +81,23 @@ class MovieController extends Controller
      * @param  Movie $movie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Movie $movie)
+    public function update(Request $request, $movie_id)
     {
+        //Validation
+        if ($request->movie_code == null || $request->movie_data == null)
+            return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
+        //TODO: Validate movie_code and movie_data for semantics
+
+        $movie = Movie::find($movie_id);
+
         if ($movie == null) {
             $movie = new Movie();
         }
-
         $movie->movie_code = $request->movie_code;
         $movie->movie_data = $request->movie_data;
         $movie->save();
 
-        return new MovieResource($movie);
+        return (new MovieResource($movie))->response()->setStatusCode(201);
     }
 
     /**

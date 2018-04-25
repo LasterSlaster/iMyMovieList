@@ -17,9 +17,7 @@ class CreateMoviesTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->string('movie_code');
-            $table->text('movie_data');
-            $table->unsignedInteger('seen_total');
-            $table->unsignedInteger('watch_total');
+            $table->integer('movie_data');
         });
     }
 

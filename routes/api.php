@@ -17,19 +17,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@show');
-Route::post('/users/usermovieratings/', 'UserMovieRatingController@store');
-Route::put('/users/{user_id}/usermovieratings/{movie_id}', 'UserMovieRatingController@update');
+Route::get('/users/{user_id}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@show');
+Route::post('/users/{user_id}/usermovieratings/', 'UserMovieRatingController@store');
+Route::put('/users/{user_id}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@update');
 
 Route::get('/seenlists', 'SeenListController@index');
 Route::get('/users/{user_id}/seenlist/', 'SeenListController@show');
-Route::put('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@update');
-Route::delete('/users/{user_id}/seenlist/movie/{movie_id}', 'SeenListController@destroy');
+Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
+Route::delete('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@destroy');
 
 Route::get('/watchlists', 'WatchListController@index');
 Route::get('/users/{user_id}/watchlist/', 'WatchListController@show');
-Route::put('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@update');
-Route::delete('/users/{user_id}/watchlist/movie/{movie_id}', 'WatchListController@destroy');
+Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
+Route::delete('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@destroy');
 
 Route::get('/users', 'UserController@index');
 Route::get('/users/{user}', 'UserController@show');

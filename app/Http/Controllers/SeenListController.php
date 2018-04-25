@@ -7,8 +7,10 @@ use App\SeenList;
 use App\Movie;
 use App\Http\Resources\MovieResource;
 use App\Http\Resources\MovieCollection;
+use App\WatchListMovie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\SeenListCollection;
 use App\User;
 
@@ -56,6 +58,9 @@ class SeenListController extends Controller
         //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
         $seenList = User::find($user_id)->seenList()->first();
 
+        if ($seenList == null)
+            return Response::create('No such resource!',404);
+
         return new MovieCollection($seenList->movies()->paginate(20));
     }
 
@@ -80,21 +85,34 @@ class SeenListController extends Controller
      */
     public function update(Request $request, $user_id, $movie_id)
     {
-        //TODO:Check if the movie is in watch list and remove it
-        //TODO: use pu only for update otherwiese fail
+        //TODO: Rewrite this method!!!
+
+        //Validation
+        if ($request->movie_id != $movie_id)
+            return Response::create('json attribute movie_id and URL keyare not the same!',400);
+
+        if ($request->movie_data != '') {
+            //TODO: validate json content
+        } else {
+            return Response::create('attribute movie_data is missing or empty', 400);
+        }
+
         $movie = Movie::find($movie_id);
+
         if ($movie == null) {
             $movie = new Movie;
-            $movie->movie_code = $movie_id;
-            $movie->movie_data = $request->movie_data;
-            $movie->watch_total = 0;
-            $movie->seen_total = 0;
-            $movie->save();
         }
+
+        $movie->movie_code = $movie_id;
+        $movie->movie_data = $request->movie_data;
+        $movie->save();
 
         $seenList = SeenList::where('user_id', $user_id)->first();
 
-        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->get();
+        if ($seenList == null)
+            return Response::create('no such user', 404);
+
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->first();
 
         if ($seenListMovie == null) {
             $seenListMovie = new SeenListMovie();
@@ -103,8 +121,14 @@ class SeenListController extends Controller
             $seenListMovie->save();
         }
 
+        //Check if movie is already in watchlist and remove
+        $watchList = WatchList::where('user_id', $user_id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $movie_id)->first();
+        if ($watchListMovie != null)
+            $watchListMovie->delete();
+
         //TODO: implement better response
-        return new MovieResource($movie);
+        return (new MovieResource($movie))->response()->setStatusCode(201);
     }
 
     /**
@@ -117,10 +141,19 @@ class SeenListController extends Controller
     public function destroy($user_id, $movie_id)
     {
         $seenList = SeenList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
+
+        if ($seenList == null)
+            return Response::create('no such user', 404);
+
         //TODO: Merge Transactions
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->first();
+
+        if ($seenListMovie == null)
+            return Response::create('no such movie in watch list', 404);
+
+        $movie = Movie::where('movie_id', $movie_id)->first();
         $seenListMovie->delete();
 
-        return new MovieResource($seenListMovie);
+        return (new MovieResource($movie))->response()->setStatusCode(200);
     }
 }

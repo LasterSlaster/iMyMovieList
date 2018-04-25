@@ -17,9 +17,13 @@ class CreateUserMovieRatingsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
             $table->unsignedInteger('movie_id');
-            $table->foreign('movie_id')->references('id')->on('movies');
+            $table->foreign('movie_id')
+                ->references('id')->on('movies')
+                ->onDelete('cascade');
             $table->unsignedInteger('rating');
         });
     }

@@ -16,9 +16,13 @@ class CreateSeenListMoviesTable extends Migration
         Schema::create('seen_list_movies', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('seen_list_id');
-            $table->foreign('seen_list_id')->references('id')->on('seen_lists');
+            $table->foreign('seen_list_id')
+                ->references('id')->on('seen_lists')
+                ->onDelete('cascade');
             $table->unsignedInteger('movie_id');
-            $table->foreign('movie_id')->references('id')->on('movies');
+            $table->foreign('movie_id')
+                ->references('id')->on('movies')
+                ->onDelete('cascade');
             $table->unique(['seen_list_id', 'movie_id']);
         });
     }

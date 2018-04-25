@@ -17,6 +17,10 @@ class CreateSeenListsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->unsignedInteger('user_id');
+            $table->unique('user_id');
+            $table->foreign('user_id')
+                ->references('id')->on('users')
+                ->onDelete('cascade');
         });
     }
 
