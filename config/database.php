@@ -19,7 +19,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql'), //INFO: pgsql_production only for production (master branch) on heroku elsewhere use mysql
+    'default' => env('DB_CONNECTION', 'pgsql_production'), //INFO: pgsql_production only for production (master branch) on heroku elsewhere use mysql
 
     /*
     |--------------------------------------------------------------------------
