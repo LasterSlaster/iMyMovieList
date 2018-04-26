@@ -48,8 +48,8 @@ class UserController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $request->password = base64_decode($request->password);
-        $credentials = $request->only('email', 'password'); //TODO:Remove this line
+       // $request->password = bcrypt(base64_decode($request->password));
+        $credentials = ['email' => $request->email, 'password' => base64_decode($request->password)];//$request->only('email', 'password'); //TODO:Remove this line
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
