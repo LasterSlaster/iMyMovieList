@@ -25,7 +25,7 @@ class UserController extends Controller
             'name' => $request->input('name'),
             'surname' => $request->input('surname'),
             'email' => $request->input('email'),
-            'password' => bcrypt($request->input('password'))
+            'password' => bcrypt(base64_decode($request->input('password')))
         ]);
         $user->save();
 
@@ -42,12 +42,11 @@ class UserController extends Controller
 
     public function signin(Request $request) {
         $this->validate($request, [
-            'name' => 'required',
-            'surname' => 'required',
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $credentials = $request->only('email', 'password');
+        $request->password = base64_decode($request->password);
+        $credentials = $request->only('email', 'password'); //TODO:Remove this line
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
@@ -60,7 +59,8 @@ class UserController extends Controller
             ], 500);
         }
         return response()->json([
-            'token' => $token
+            'token' => $token,
+            'user' => $this->json_encode(JWTAuth::parseToken()->toUser())
         ], 200);
     }
 
