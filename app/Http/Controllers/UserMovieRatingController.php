@@ -6,6 +6,7 @@ use App\UserMovieRating;
 use App\Http\Resources\UserMovieRatingResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use JWTAuth;
 
 class UserMovieRatingController extends Controller
 {

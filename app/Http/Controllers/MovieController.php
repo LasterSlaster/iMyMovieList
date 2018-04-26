@@ -7,6 +7,7 @@ use App\Http\Resources\MovieResource;
 use Illuminate\Http\Request;
 use App\Movie;
 use Illuminate\Http\Response;
+use JWTAuth;
 
 class MovieController extends Controller
 {

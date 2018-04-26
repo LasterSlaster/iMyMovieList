@@ -9,6 +9,7 @@ use App\Http\Resources\CommentCollection;
 use App\Http\Resources\CommentResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use JWTAuth;
 
 /**
  * Class CommentController

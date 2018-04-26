@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\SeenListCollection;
 use App\User;
+use JWTAuth;
 
 class SeenListController extends Controller
 {

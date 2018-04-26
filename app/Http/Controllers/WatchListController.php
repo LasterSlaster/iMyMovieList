@@ -12,7 +12,7 @@ use App\WatchListMovie;
 use App\Movie;
 use App\User;
 use App\Http\Resources\WatchListCollection;
-
+use JWTAuth;
 
 /**
  * Class WatchListController
