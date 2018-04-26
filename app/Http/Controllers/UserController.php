@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\User;
+use App\SeenList;
+use App\WatchList;
 use App\Http\Resources\UserCollection;
 use Illuminate\Http\Request;
 use App\Http\Resources\UserResource;
