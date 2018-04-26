@@ -31,12 +31,13 @@ class UserController extends Controller
         ]);
         $user->save();
 
-        $seenList = new SeenList([
-            'user_id' => $user->id
-        ]);
-        $watchList = new WatchList([
-            'user_id' => $user->id
-        ]);
+        $seenList = new SeenList();
+        $seenList->user_id = $user->id;
+        $seenList->save();
+        $watchList = new WatchList();
+        $watchList->user_id = $user->id;
+        $watchList->save();
+
         return response()->json([
             'message' => 'Successfully created user!'
         ], 201);
@@ -52,7 +53,8 @@ class UserController extends Controller
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
-                    'error' => 'Invalid Credentials!'
+                    'error' => 'Invalid Credentials!',
+                    'credentials' => $credentials
                 ], 401);
             }
         } catch (JWTException $e) {
