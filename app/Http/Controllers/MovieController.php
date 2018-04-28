@@ -49,7 +49,7 @@ class MovieController extends Controller
         $movie->movie_data = $request->movie_data;
         $movie->save();
 
-        return (new MovieResource($movie))->response()->setStatusCode(201);
+        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
     }
 
     /**

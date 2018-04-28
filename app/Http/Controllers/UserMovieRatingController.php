@@ -59,7 +59,7 @@ class UserMovieRatingController extends Controller
         $userMovieRating->rating = $request->rating;
         $userMovieRating->save();
         //TODO: Return the new Resource URL
-        return (new UserMovieRatingResource($userMovieRating))->response()->setStatusCode(201);
+        return (new UserMovieRatingResource($userMovieRating))->response()->setStatusCode(201)->header('location', url()->full()."/".$userMovieRating->id);
     }
 
     /**

@@ -122,7 +122,7 @@ class CommentController extends Controller
         $comment->text = $request->text;
         $comment->store();
 
-        return (new CommentResource($comment))->response()->setStatusCode(201);
+        return (new CommentResource($comment))->response()->setStatusCode(201)->header('location', url()->full()."/".$comment->id);
     }
 
     /**
