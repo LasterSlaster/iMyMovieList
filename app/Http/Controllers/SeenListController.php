@@ -49,6 +49,54 @@ class SeenListController extends Controller
         //TODO: Rewrite this method!!!
 
         //Validation
+        //TODO:Validate existence of request attributes
+        $authUser = JWTAuth::parseToken()->toUser();
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
+        if ($request->movie_data != '') {
+            //TODO: validate json content
+        } else {
+            return Response::create('attribute movie_data is missing or empty', 422);
+        }
+
+        if ($request->movie_code == '')
+            return Response::create('attribute movie_data is missing or empty', 422);
+
+        //TODO: refactor this part. Vounerable because different id for same movie
+        $movie = Movie::where('movie_code', $request->movie_code)->first();
+        $seenList = SeenList::where('user_id', $user_id)->first();
+        if (is_null($seenList))
+            return Response::create('no such user', 404);
+
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie->id)->first();
+        if (!is_null($seenListMovie))
+            return Response::create('Resource is already present use PUT to update', 400);
+
+        $movie = new Movie();
+        $movie->movie_code = $request->movie_code;
+        $movie->movie_data = $request->movie_data;
+        $movie->save();
+
+        $seenListMovie = new SeenListMovie();
+        $seenListMovie->seen_list_id = $seenList->id;
+        $seenListMovie->movie_id = $movie->id;
+        $seenListMovie->save();
+
+        //Check if movie is already in watchlist and remove
+        $watchList = watchList::where('user_id', $user_id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $request->id)->first();
+
+        if (!is_null($watchListMovie))
+            $watchListMovie->delete();
+
+        //TODO: implement better response
+        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->id);
+
+        ///////////
+        //TODO: Rewrite this method!!!
+
+        //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
         if ($authUser->id != $user_id)
@@ -133,6 +181,7 @@ class SeenListController extends Controller
      */
     public function update(Request $request, $user_id, $movie_id)
     {
+        //TODO: Think about removing this method
         //TODO: Rewrite this method!!!
 
         //Validation
