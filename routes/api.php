@@ -21,6 +21,7 @@ Route::post('/user/signup', 'UserController@signup');
 Route::post('/user/signin', 'UserController@signin');
 
 Route::middleware('auth.jwt')->group(function() {
+
     Route::get('/users/{user_id}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@show');
     Route::post('/users/{user_id}/usermovieratings/', 'UserMovieRatingController@store');
     Route::put('/users/{user_id}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@update');
