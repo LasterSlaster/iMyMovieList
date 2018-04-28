@@ -28,12 +28,12 @@ Route::middleware('auth.jwt')->group(function() {
 
     Route::get('/seenlists', 'SeenListController@index');
     Route::get('/users/{user_id}/seenlist/', 'SeenListController@show');
-    Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
+    Route::match(['put', 'post'], '/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
     Route::delete('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@destroy');
 
     Route::get('/watchlists', 'WatchListController@index');
     Route::get('/users/{user_id}/watchlist/', 'WatchListController@show');
-    Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
+    Route::match(['put', 'post'], '/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
     Route::delete('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@destroy');
 
     Route::get('/users', 'UserController@index');
