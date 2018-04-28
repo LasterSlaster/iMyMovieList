@@ -28,6 +28,7 @@ class UserResource extends Resource
 
         return [
             'id' => $this->id,
+            'created_at' => $this->created_at,
             'name' => $this->name,
             'surname' => $this->surname,
             'role' => $this->role,
