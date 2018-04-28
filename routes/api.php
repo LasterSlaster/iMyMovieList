@@ -31,29 +31,29 @@ Route::middleware('auth.jwt')->group(function() {
     Route::get('/users/{nickname}/seenlist/', 'SeenListController@show');
     Route::post('/users/{nickname}/seenlist/movies/', 'SeenListController@store');
     //Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
-    Route::delete('/users/{nickname}/seenlist/movies/{movie_id}', 'SeenListController@destroy');
+    Route::delete('/users/{nickname}/seenlist/movies/{movie_code}', 'SeenListController@destroy');
 
     Route::get('/watchlists', 'WatchListController@index');
     Route::get('/users/{nickname}/watchlist/', 'WatchListController@show');
     Route::post('/users/{nickname}/watchlist/movies/', 'WatchListController@store');
     //Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
-    Route::delete('/users/{nickname}/watchlist/movies/{movie_id}', 'WatchListController@destroy');
+    Route::delete('/users/{nickname}/watchlist/movies/{movie_code}', 'WatchListController@destroy');
 
-    Route::get('/users/{nickname}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@show');
+    Route::get('/users/{nickname}/usermovieratings/movies/{movie_code}', 'UserMovieRatingController@show');
     Route::post('/users/{nickname}/usermovieratings/', 'UserMovieRatingController@store');
-    Route::put('/users/{nickname}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@update');
+    Route::put('/users/{nickname}/usermovieratings/movies/{movie_code}', 'UserMovieRatingController@update');
 
     Route::get('/comments', 'CommentController@index');
-    Route::get('/movies/{movie_id}/comments', 'CommentController@indexMovieComments');
+    Route::get('/movies/{movie_code}/comments', 'CommentController@indexMovieComments');
     Route::get('/users/{nickname}/comments', 'CommentController@indexUserComments');
     Route::get('/comments/{comment}', 'CommentController@show');
     Route::post('/comments', 'CommentController@storeMovieComment');
-    Route::put('/users/{nickname}/movies/{movie_id}/comments/{comment_id}', 'CommentController@update');
+    Route::put('/users/{nickname}/movies/{movie_code}/comments/{comment_id}', 'CommentController@update');
 
     Route::get('/movies', 'MovieController@index');
-    Route::get('/movies/{movie}', 'MovieController@show');
+    Route::get('/movies/{movie_code}', 'MovieController@show');
     Route::post('/movies', 'MovieController@store');
-    Route::put('/movies/{movie_id}', 'MovieController@update');
+    Route::put('/movies/{movie_code}', 'MovieController@update');
 });
 
 /*Route::apiResource([

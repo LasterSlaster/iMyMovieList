@@ -58,10 +58,9 @@ class MovieController extends Controller
      * @param  Movie $movie
      * @return \Illuminate\Http\Response
      */
-    public function show(Movie $movie)
+    public function show($movie_code)
     {
-        //TODO: Check behavior for non existing movie_ids - exception or null?
-        return new MovieResource($movie);
+        return new MovieResource(Movie::where('movie_code', $movie_code)->firstOrFail());
     }
 
     /**
@@ -82,14 +81,14 @@ class MovieController extends Controller
      * @param  Movie $movie
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $movie_id)
+    public function update(Request $request, $movie_code)
     {
         //Validation
         if (is_null($request->movie_code)|| is_null($request->movie_data))
             return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
         //TODO: Validate movie_code and movie_data for semantics
 
-        $movie = Movie::find($movie_id);
+        $movie = Movie::where('movie_code', $movie_code)->first();
 
         if (is_null($movie)) {
             $movie = new Movie();

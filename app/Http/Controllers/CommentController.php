@@ -40,15 +40,16 @@ class CommentController extends Controller
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
      */
-    public function indexMovieComments($movie_id)
+    public function indexMovieComments($movie_code)
     {
-        $comments = Comment::where('movie_id', $movie_id)->paginate(20);
+        $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
+        $comments = Comment::where('movie_id', $movie->id)->paginate(20);
 
         if (is_null($comments))
-            return Response::create('No comments to movie: ' . $movie_id . ' available', 404);
+            return Response::create('No comments to movie: ' . $movie_code . ' available', 404);
 
         //find current user comment
-        $userComment = Comment::where('user_id', JWTAuth::parseToken()->toUser()->id)->where('movie_id', $movie_id)->first();
+        $userComment = Comment::where('user_id', JWTAuth::parseToken()->toUser()->id)->where('movie_id', $movie->id)->first();
         //TODO: Check behavior on not existing comment!!!
         // Create collections first then paginate
         return (new CommentCollection($comments))
@@ -101,15 +102,15 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //Validation
-        if (is_null($request->movie_id) || is_null($request->nickname))
-            return Response::create('JSON must contain a movie_id and a nickname', 422);
+        if (is_null($request->movie_code) || is_null($request->nickname))
+            return Response::create('JSON must contain a movie_code and a nickname', 422);
 
         $authUser = JWTAuth::parseToken()->toUser();
 
         if ($authUser->nickname != $request->nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        $relatedMovie = Movie::find($request->movie_id);
+        $relatedMovie = Movie::where('movie_code', $request->movie_code)->first();
         $relatedUser = User::where('nickname', $request->nickname)->first();
 
         if (is_null($relatedMovie)|| is_null($relatedUser))
@@ -117,7 +118,7 @@ class CommentController extends Controller
 
         $comment = new Comment();
         $comment->user_id = $relatedUser->id;
-        $comment->movie_id = $request->movie_id;
+        $comment->movie_id = $relatedMovie->id;
         $comment->text = $request->text;
         $comment->store();
 
@@ -154,10 +155,10 @@ class CommentController extends Controller
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $nickname, $movie_id, $comment_id)
+    public function update(Request $request, $nickname, $movie_code, $comment_id)
     {
         //Validation
-        if ($request->nickname != $nickname || $request->movie_id != $movie_id)
+        if ($request->nickname != $nickname || $request->movie_code != $movie_code)
             return Response::create('URL parameters must match request body attributes', 422);
 
         $comment = Comment::find($comment_id);
@@ -170,8 +171,10 @@ class CommentController extends Controller
         if (is_null($user))
             return Response::create('No such user', 404);
 
+        $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
+
         $comment->user_id = $user->id;
-        $comment->movie_id = $request->movie_id;
+        $comment->movie_id = $movie->id;
         $comment->comment_text = $request->comment_text;
         $comment->save();
 

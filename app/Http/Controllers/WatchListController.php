@@ -91,13 +91,13 @@ class WatchListController extends Controller
 
         //Check if movie is already in watchlist and remove
         $seenList = SeenList::where('user_id', $user->id)->first();
-        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $request->id)->first();
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie->id)->first();
 
         if (!is_null($seenListMovie))
             $seenListMovie->delete();
 
         //TODO: implement better response
-        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->id);
+        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
     }
 
     /**
@@ -143,7 +143,7 @@ class WatchListController extends Controller
      * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $user_id, $movie_id)
+    public function update(Request $request, $user_id, $movie_code)
     {
         //TODO: Think about removing this method and use a idempotent post method
         //TODO: Rewrite this method
@@ -154,7 +154,7 @@ class WatchListController extends Controller
         if ($authUser->id != $user_id)
             return Response::create('Not authorized to access this resource', 403);
 
-        if ($request->movie_id != $movie_id)
+        if ($request->movie_code != $movie_code)
              return Response::create('json attribute movie_id and URL keyare not the same!',400);
 
          if ($request->movie_data != '') {
@@ -163,13 +163,13 @@ class WatchListController extends Controller
              return Response::create('attribute movie_data is missing or empty', 400);
          }
 
-        $movie = Movie::find($movie_id);
+        $movie = Movie::where($movie_code)->first();
 
         if (is_null($movie)) {
             return Response::create('Resource not found. Use POST to add a movie to the list', 404);
         }
 
-        $movie->movie_code = $movie_id;
+        $movie->movie_code = $movie_code;
         $movie->movie_data = $request->movie_data;
         $movie->save();
 
@@ -178,18 +178,18 @@ class WatchListController extends Controller
         if (is_null($watchList))
             return Response::create('no such user', 404);
 
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->get();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->get();
 
         if (is_null($watchListMovie)) {
             $watchListMovie = new WatchListMovie();
             $watchListMovie->seen_list_id = $watchList->id;
-            $watchListMovie->movie_id = $movie_id;
+            $watchListMovie->movie_id = $movie->id;
             $watchListMovie->save();
         }
 
         //Check if movie is already in watchlist and remove
         $seenList = SeenList::where('user_id', $user_id)->first();
-        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie_id)->first();
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie->id)->first();
 
         if (!is_null($seenListMovie))
             $seenListMovie->delete();
@@ -205,7 +205,7 @@ class WatchListController extends Controller
      * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($nickname, $movie_id)
+    public function destroy($nickname, $movie_code)
     {
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
@@ -219,13 +219,15 @@ class WatchListController extends Controller
         if (is_null($watchList))
             return Response::create('no such user', 404);
 
+        $movie = Movie::where('movie_code', $movie_code)->first();
+        if(is_null($movie))
+            return Response::create('No such movie', 404);
         //TODO: Merge Transactions
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie_id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
 
         if (is_null($watchListMovie))
             return Response::create('no such movie in watch list', 404);
 
-        $movie = Movie::where('movie_id', $movie_id)->first();
         $watchListMovie->delete();
 
         return (new MovieResource($movie))->response()->setStatusCode(200);
