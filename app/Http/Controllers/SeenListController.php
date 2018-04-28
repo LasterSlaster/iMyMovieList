@@ -87,7 +87,7 @@ class SeenListController extends Controller
 
         //Check if movie is already in watchlist and remove
         $watchList = watchList::where('user_id', $user->id)->first();
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $request->id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $request->id)->first();
 
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
