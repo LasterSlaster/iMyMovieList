@@ -115,7 +115,7 @@ class WatchListController extends Controller
 
         //$watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
 
-        $watchList = User::where('nickanem', $nickname)->firstOrFail()->watchList;
+        $watchList = User::where('nickname', $nickname)->firstOrFail()->watchList;
 
         if (is_null($watchList))
             return Response::create('No such resource!',404);
