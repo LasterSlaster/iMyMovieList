@@ -72,7 +72,7 @@ class CommentController extends Controller
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        $user = User::where('nickname', $nickname)->findOrFail();
+        $user = User::where('nickname', $nickname)->firstOrFail();
         $comments = Comment::where('user_id', $user->id)->paginate(20);
 
         if (is_null($comments))

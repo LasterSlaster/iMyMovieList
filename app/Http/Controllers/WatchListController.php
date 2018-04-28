@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
+use App\Http\Resources\WatchListCollection;
 use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use App\WatchList;
@@ -13,7 +13,6 @@ use App\WatchListMovie;
 use App\SeenListMovie;
 use App\Movie;
 use App\User;
-use App\Http\Resources\WatchListCollection;
 use JWTAuth;
 
 /**
@@ -69,20 +68,20 @@ class WatchListController extends Controller
             return Response::create('attribute movie_code is missing or empty', 422);
 
         //TODO: refactor this part. Vounerable because different id for same movie
-        $user = User::where('nickname', $nickname)->findOrFail();
-        $movie = Movie::where('movie_code',$request->movie_code)->first();
+        $user = User::where('nickname', $nickname)->firstOrFail();
         $watchList = WatchList::where('user_id', $user->id)->first();
         if (is_null($watchList))
             return Response::create('no such list', 404);
 
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $movie->id)->first();
+        if (is_null($movie = Movie::where('movie_code', $request->movie_code)->first())) {
+            $movie = new Movie();
+            $movie->movie_code = $request->movie_code;
+            $movie->movie_data = $request->movie_data;
+            $movie->save();
+        }
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
         if (!is_null($watchListMovie))
             return Response::create('Resource is already present use PUT to update', 400);
-
-        $movie = new Movie();
-        $movie->movie_code = $request->movie_code;
-        $movie->movie_data = $request->movie_data;
-        $movie->save();
 
         $watchListMovie = new WatchListMovie();
         $watchListMovie->watch_list_id = $watchList->id;
@@ -213,7 +212,7 @@ class WatchListController extends Controller
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        $user = User::where('nickname', $nickname)->findOrFail();
+        $user = User::where('nickname', $nickname)->firstOrFail();
         $watchList = WatchList::where('user_id', $user->id)->first(); //TODO: User more destinct primary keys
 
         if (is_null($watchList))

@@ -72,7 +72,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return new UserCollection((UserResource::collection(User::paginate(20))));
+        return new UserCollection(UserResource::collection(User::paginate(20)));
     }
 
     /**

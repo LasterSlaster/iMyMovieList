@@ -4,16 +4,15 @@ namespace App\Http\Controllers;
 
 use App\SeenListMovie;
 use App\SeenList;
-use App\Movie;
-use App\Http\Resources\MovieResource;
-use App\Http\Resources\MovieCollection;
 use App\WatchListMovie;
 use App\WatchList;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
-use App\Http\Resources\SeenListCollection;
+use App\Movie;
 use App\User;
+use App\Http\Resources\MovieResource;
+use App\Http\Resources\MovieCollection;
+use App\Http\Resources\SeenListCollection;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use JWTAuth;
 
 class SeenListController extends Controller
@@ -66,19 +65,20 @@ class SeenListController extends Controller
 
         //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
-        $movie = Movie::where('movie_code', $request->movie_code)->first();
         $seenList = SeenList::where('user_id', $user->id)->first();
         if (is_null($seenList))
             return Response::create('no such list', 404);
 
-        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie->id)->first();
+        if (is_null($movie = Movie::where('movie_code', $request->movie_code)->first())) {
+            $movie = new Movie();
+            $movie->movie_code = $request->movie_code;
+            $movie->movie_data = $request->movie_data;
+            $movie->save();
+        }
+
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
         if (!is_null($seenListMovie))
             return Response::create('Resource is already present use PUT to update', 400);
-
-        $movie = new Movie();
-        $movie->movie_code = $request->movie_code;
-        $movie->movie_data = $request->movie_data;
-        $movie->save();
 
         $seenListMovie = new SeenListMovie();
         $seenListMovie->seen_list_id = $seenList->id;
@@ -111,7 +111,7 @@ class SeenListController extends Controller
             return Response::create('Not authorized to access this resource', 403);
 
         //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
-        $seenList = User::where('nickname', $nickname)->findOrFail()->seenList;
+        $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
 
         if (is_null($seenList))
             return Response::create('No such resource!',404);
