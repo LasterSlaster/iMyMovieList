@@ -48,7 +48,7 @@ class UserController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $credentials = ['email' => $request->email, 'password' => base64_decode($request->password)];
+        $credentials = ['email' => strtolower($request->email), 'password' => base64_decode($request->password)];
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
@@ -74,7 +74,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return new UserCollection(UserResource::collection(User::paginate(20)));
+        return new UserCollection((UserResource::collection(User::paginate(20))));
     }
 
     /**

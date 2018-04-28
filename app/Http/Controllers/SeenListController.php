@@ -8,6 +8,7 @@ use App\Movie;
 use App\Http\Resources\MovieResource;
 use App\Http\Resources\MovieCollection;
 use App\WatchListMovie;
+use App\WatchList;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -43,9 +44,49 @@ class SeenListController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, $user_id)
     {
-        //
+        //TODO: Rewrite this method!!!
+
+        //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->id != $user_id)
+            return Response::create('Not authorized to access this resource', 403);
+
+        if ($request->movie_data != '') {
+            //TODO: validate json content
+        } else {
+            return Response::create('attribute movie_data is missing or empty', 400);
+        }
+
+        $movie = new Movie();
+        $movie->movie_code = $request->movie_code;
+        $movie->movie_data = $request->movie_data;
+        $movie->save();
+
+        $seenList = SeenList::where('user_id', $user_id)->first();
+
+        if (is_null($seenList))
+            return Response::create('no such user', 404);
+
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $request->id)->first();
+
+        if (is_null($seenListMovie)) {
+            $seenListMovie = new SeenListMovie();
+            $seenListMovie->seen_list_id = $seenList->id;
+            $seenListMovie->movie_id = $request->id;
+            $seenListMovie->save();
+        }
+
+        //Check if movie is already in watchlist and remove
+        $watchList = WatchList::where('user_id', $user_id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $request->id)->first();
+        if (!is_null($watchListMovie))
+            $watchListMovie->delete();
+
+        //TODO: implement better response
+        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->id);
     }
 
     /**
@@ -112,10 +153,7 @@ class SeenListController extends Controller
         $movie = Movie::find($movie_id);
 
         if (is_null($movie)) {
-            if ($request->isMethod('put'))
-                return Response::create('Resource not found. Use POST to add a movie to the list', 404);
-            if ($request->isMethod('post'))
-                $movie = new Movie();
+            return Response::create('Resource not found. Use POST to add a movie to the list', 404);
         }
 
         $movie->movie_code = $movie_id;
@@ -143,9 +181,6 @@ class SeenListController extends Controller
             $watchListMovie->delete();
 
         //TODO: implement better response
-        if ($request->isMethod('post'))
-            return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', ulr('/')->full."/".$movie->id);
-
         return (new MovieResource($movie))->response()->setStatusCode(201);
     }
 
