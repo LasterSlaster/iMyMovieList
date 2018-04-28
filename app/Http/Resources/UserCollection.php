@@ -16,7 +16,7 @@ class UserCollection extends ResourceCollection
     {
        // return parent::toArray($request);
         return [
-            'data' => UserResource::collection($request['data'])
+            'data' => UserResource::collection($this->collection)
         ];
     }
 }

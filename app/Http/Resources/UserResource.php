@@ -31,8 +31,8 @@ class UserResource extends Resource
             'created_at' => $this->created_at,
             'nickname' => $this->nickname,
             'role' => $this->role,
-            'watchlist' => url('/')."/api/users/".$this->id."/watchlist",
-            'seenlist' => url('/')."/api/users/".$this->id."/seenlist",
+            'watchlist' => url('/')."/api/users/".$this->nickname."/watchlist",
+            'seenlist' => url('/')."/api/users/".$this->nickname."/seenlist",
             'seenListCount' => $seenListMovieCount,
             'watchListCount' => $watchListMovieCount
         ];
