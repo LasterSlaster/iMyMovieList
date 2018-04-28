@@ -17,15 +17,13 @@ class UserController extends Controller
 
     public function signup(Request $request) {
         $this->validate($request, [
-            'name' => 'required',
-            'surname' => 'required',
+            'nickname' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required'
         ]);
 
         $user = new User([
-            'name' => $request->input('name'),
-            'surname' => $request->input('surname'),
+            'nickname' => $request->input('nickname'),
             'email' => $request->input('email'),
             'password' => bcrypt(base64_decode($request->input('password')))
         ]);
@@ -104,9 +102,9 @@ class UserController extends Controller
      * @param  User $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show($nickname)
     {
-        return new UserResource($user);
+        return new UserResource(User::where('nickname', $nickname)->firstOrFail());
     }
 
     /**
@@ -127,13 +125,13 @@ class UserController extends Controller
      * @param  User $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $user_id)
+    public function update(Request $request, $nickname)
     {
         $authUser = JWTAuth::parseToken()->toUser();
         if ($authUser->role != 'admin') {
             return Response::create('Not authoritzed to access this resource', 403);
         }
-        $user = User::findOrFail($user_id);
+        $user = User::where('nickname', $nickname)->firstOrFail();
         //Validation
         if (is_null($request->role) && ($request->role != 'admin' || $request->role != 'user'))
             return Response::create('JSON body must contain attribute role. Possible values: admin|user', 422);
@@ -150,10 +148,11 @@ class UserController extends Controller
      * @param  User $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy($nickname)
     {
+        $user = User::where('nickname', $nickname)->firstOrFail();
         $authUser = JWTAuth::parseToken()->toUser();
-        if ($authUser->id != $user->id || $authUser->role != 'admin') {
+        if ($authUser->nickname != $nickname || $authUser->role != 'admin') {
             return Response::create('Not authorized to access this resource', 403);
         }
         //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model

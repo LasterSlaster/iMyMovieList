@@ -44,14 +44,15 @@ class SeenListController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $user_id)
+    public function store(Request $request, $nickname)
     {
         //TODO: Rewrite this method!!!
 
         //Validation
         //TODO:Validate existence of request attributes
         $authUser = JWTAuth::parseToken()->toUser();
-        if ($authUser->id != $user_id)
+
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
         if ($request->movie_data != '') {
@@ -61,13 +62,14 @@ class SeenListController extends Controller
         }
 
         if ($request->movie_code == '')
-            return Response::create('attribute movie_data is missing or empty', 422);
+            return Response::create('attribute movie_code is missing or empty', 422);
 
         //TODO: refactor this part. Vounerable because different id for same movie
+        $user = User::where('nickname', $nickname)->firstOrFail();
         $movie = Movie::where('movie_code', $request->movie_code)->first();
-        $seenList = SeenList::where('user_id', $user_id)->first();
+        $seenList = SeenList::where('user_id', $user->id)->first();
         if (is_null($seenList))
-            return Response::create('no such user', 404);
+            return Response::create('no such list', 404);
 
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie->id)->first();
         if (!is_null($seenListMovie))
@@ -84,52 +86,9 @@ class SeenListController extends Controller
         $seenListMovie->save();
 
         //Check if movie is already in watchlist and remove
-        $watchList = watchList::where('user_id', $user_id)->first();
+        $watchList = watchList::where('user_id', $user->id)->first();
         $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $request->id)->first();
 
-        if (!is_null($watchListMovie))
-            $watchListMovie->delete();
-
-        //TODO: implement better response
-        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->id);
-
-        ///////////
-        //TODO: Rewrite this method!!!
-
-        //Validation
-        $authUser = JWTAuth::parseToken()->toUser();
-
-        if ($authUser->id != $user_id)
-            return Response::create('Not authorized to access this resource', 403);
-
-        if ($request->movie_data != '') {
-            //TODO: validate json content
-        } else {
-            return Response::create('attribute movie_data is missing or empty', 400);
-        }
-
-        $movie = new Movie();
-        $movie->movie_code = $request->movie_code;
-        $movie->movie_data = $request->movie_data;
-        $movie->save();
-
-        $seenList = SeenList::where('user_id', $user_id)->first();
-
-        if (is_null($seenList))
-            return Response::create('no such user', 404);
-
-        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $request->id)->first();
-
-        if (is_null($seenListMovie)) {
-            $seenListMovie = new SeenListMovie();
-            $seenListMovie->seen_list_id = $seenList->id;
-            $seenListMovie->movie_id = $request->id;
-            $seenListMovie->save();
-        }
-
-        //Check if movie is already in watchlist and remove
-        $watchList = WatchList::where('user_id', $user_id)->first();
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $request->id)->first();
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
@@ -143,16 +102,16 @@ class SeenListController extends Controller
      * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function show($user_id)
+    public function show($nickname)
     {
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $user_id)
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
         //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
-        $seenList = User::find($user_id)->seenList;
+        $seenList = User::where('nickname', $nickname)->findOrFail()->seenList;
 
         if (is_null($seenList))
             return Response::create('No such resource!',404);
@@ -240,18 +199,18 @@ class SeenListController extends Controller
      * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($user_id, $movie_id)
+    public function destroy($nickname, $movie_id)
     {
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $user_id)
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-
-        $seenList = SeenList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
+        $user = User::where('nickname', $nickname)->firstOrFail();
+        $seenList = SeenList::where('user_id', $user->id)->first(); //TODO: User more destinct primary keys
 
         if (is_null($seenList))
-            return Response::create('no such user', 404);
+            return Response::create('no such list', 404);
 
         //TODO: Merge Transactions
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->first();

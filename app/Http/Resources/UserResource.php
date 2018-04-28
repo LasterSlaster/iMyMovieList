@@ -29,8 +29,7 @@ class UserResource extends Resource
         return [
             'id' => $this->id,
             'created_at' => $this->created_at,
-            'name' => $this->name,
-            'surname' => $this->surname,
+            'nickname' => $this->nickname,
             'role' => $this->role,
             'watchlist' => url('/')."/api/users/".$this->id."/watchlist",
             'seenlist' => url('/')."/api/users/".$this->id."/seenlist",

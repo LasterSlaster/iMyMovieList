@@ -48,14 +48,15 @@ class WatchListController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $user_id)
+    public function store(Request $request, $nickname)
     {
         //TODO: Rewrite this method!!!
 
         //Validation
         //TODO:Validate existence of request attributes
         $authUser = JWTAuth::parseToken()->toUser();
-        if ($authUser->id != $user_id)
+
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
         if ($request->movie_data != '') {
@@ -65,13 +66,14 @@ class WatchListController extends Controller
         }
 
         if ($request->movie_code == '')
-            return Response::create('attribute movie_data is missing or empty', 422);
+            return Response::create('attribute movie_code is missing or empty', 422);
 
         //TODO: refactor this part. Vounerable because different id for same movie
+        $user = User::where('nickname', $nickname)->findOrFail();
         $movie = Movie::where('movie_code',$request->movie_code)->first();
-        $watchList = WatchList::where('user_id', $user_id)->first();
+        $watchList = WatchList::where('user_id', $user->id)->first();
         if (is_null($watchList))
-            return Response::create('no such user', 404);
+            return Response::create('no such list', 404);
 
         $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $movie->id)->first();
         if (!is_null($watchListMovie))
@@ -88,7 +90,7 @@ class WatchListController extends Controller
         $watchListMovie->save();
 
         //Check if movie is already in watchlist and remove
-        $seenList = SeenList::where('user_id', $user_id)->first();
+        $seenList = SeenList::where('user_id', $user->id)->first();
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $request->id)->first();
 
         if (!is_null($seenListMovie))
@@ -104,16 +106,17 @@ class WatchListController extends Controller
      * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function show($user_id)
+    public function show($nickname)
     {
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $user_id)
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
         //$watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
-        $watchList = User::find($user_id)->watchList;
+
+        $watchList = User::where('nickanem', $nickname)->firstOrFail()->watchList;
 
         if (is_null($watchList))
             return Response::create('No such resource!',404);
@@ -202,15 +205,16 @@ class WatchListController extends Controller
      * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($user_id, $movie_id)
+    public function destroy($nickname, $movie_id)
     {
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $user_id)
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        $watchList = WatchList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
+        $user = User::where('nickname', $nickname)->findOrFail();
+        $watchList = WatchList::where('user_id', $user->id)->first(); //TODO: User more destinct primary keys
 
         if (is_null($watchList))
             return Response::create('no such user', 404);

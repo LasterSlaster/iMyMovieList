@@ -22,34 +22,33 @@ Route::post('/user/signin', 'UserController@signin');
 
 Route::middleware('auth.jwt')->group(function() {
 
-    Route::get('/users/{user_id}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@show');
-    Route::post('/users/{user_id}/usermovieratings/', 'UserMovieRatingController@store');
-    Route::put('/users/{user_id}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@update');
+    Route::get('/users', 'UserController@index');
+    Route::get('/users/{nickname}', 'UserController@show');
+    Route::patch('/users/{nickname}', 'UserController@update');
+    Route::delete('/users/{nickname}', 'UserController@destroy');
 
     Route::get('/seenlists', 'SeenListController@index');
-    Route::get('/users/{user_id}/seenlist/', 'SeenListController@show');
-    Route::post('/users/{user_id}/seenlist/movies/', 'SeenListController@store');
-    Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
-    Route::delete('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@destroy');
+    Route::get('/users/{nickname}/seenlist/', 'SeenListController@show');
+    Route::post('/users/{nickname}/seenlist/movies/', 'SeenListController@store');
+    //Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
+    Route::delete('/users/{nickname}/seenlist/movies/{movie_id}', 'SeenListController@destroy');
 
     Route::get('/watchlists', 'WatchListController@index');
-    Route::get('/users/{user_id}/watchlist/', 'WatchListController@show');
-    Route::post('/users/{user_id}/watchlist/movies/', 'WatchListController@store');
-    Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
-    Route::delete('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@destroy');
+    Route::get('/users/{nickname}/watchlist/', 'WatchListController@show');
+    Route::post('/users/{nickname}/watchlist/movies/', 'WatchListController@store');
+    //Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
+    Route::delete('/users/{nickname}/watchlist/movies/{movie_id}', 'WatchListController@destroy');
 
-    Route::get('/users', 'UserController@index');
-    Route::get('/users/{user}', 'UserController@show');
-
-    Route::patch('/users/{user_id}', 'UserController@update');
-    Route::delete('/users/{user}', 'UserController@destroy');
+    Route::get('/users/{nickname}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@show');
+    Route::post('/users/{nickname}/usermovieratings/', 'UserMovieRatingController@store');
+    Route::put('/users/{nickname}/usermovieratings/movies/{movie_id}', 'UserMovieRatingController@update');
 
     Route::get('/comments', 'CommentController@index');
     Route::get('/movies/{movie_id}/comments', 'CommentController@indexMovieComments');
-    Route::get('/users/{user_id}/comments', 'CommentController@indexUserComments');
+    Route::get('/users/{nickname}/comments', 'CommentController@indexUserComments');
     Route::get('/comments/{comment}', 'CommentController@show');
     Route::post('/comments', 'CommentController@storeMovieComment');
-    Route::put('/users/{user_id}/movies/{movie_id}/comments/{comment_id}', 'CommentController@update');
+    Route::put('/users/{nickname}/movies/{movie_id}/comments/{comment_id}', 'CommentController@update');
 
     Route::get('/movies', 'MovieController@index');
     Route::get('/movies/{movie}', 'MovieController@show');

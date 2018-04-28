@@ -39,20 +39,20 @@ class UserMovieRatingController extends Controller
     public function store(Request $request)
     {
         //Validation
-        if (is_null($request->movie_id) || is_null($request->user_id))
-            return Response::create('JSON body must contain attributes movie_id, user_id and rating', 422);
-        if (is_null(Movie::find($request->user_id)) || is_null(User::find($request->movie_id)))
-            return Response::create('User or movie id is not valid', 422);
-
-        $authUser = JWTAuth::parseToken()->toUser();
-
-        if ($authUser->id != $request->user_id)
-            return Response::create('Not authorized to access this resource', 403);
+        $user = User::where('nickname', $request->nickname)->firstOrFail();
+        if (is_null($request->movie_id) || is_null($request->nickname))
+            return Response::create('JSON body must contain attributes movie_id, nickname and rating', 422);
+        if (is_null(Movie::find($user->id)))
+            return Response::create('Movie id is not valid', 422);
 
         //TODO: Validate that rating is an interger within the range
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->nickname != $request->nickname)
+            return Response::create('Not authorized to access this resource', 403);
 
         $userMovieRating = new UserMovieRating();
-        $userMovieRating->user_id = $request->user_id;
+        $userMovieRating->user_id = $user->id;
         $userMovieRating->movie_id = $request->movie_id;
         $userMovieRating->rating = $request->rating;
         $userMovieRating->save();
@@ -67,9 +67,10 @@ class UserMovieRatingController extends Controller
      * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function show($user_id, $movie_id)
+    public function show($nickname, $movie_id)
     {
-        $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->first();
+        $user = User::where('nickname', $nickname)->firstOrFail();
+        $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie_id)->first();
 
         if (is_null($userMovieRating))
             return Response::create('Specified resource not found', 404);
@@ -96,26 +97,26 @@ class UserMovieRatingController extends Controller
      * @param int $movie_id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $user_id, $movie_id)
+    public function update(Request $request, $nickname, $movie_id)
     {
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $user_id)
+        if ($authUser->id != $nickname)
             return Response::create('Not authorized to access this resource', 403);
-
-        if ($request->user_id != $user_id && $request->movie_id != $movie_id)
-            return Response::create('URL parameter movie_id and user_id must be equal to json body attributes', 422);
+        $user = User::where('nickname', $nickname)->firstOrFail();
+        if ($request->nickname != $nickname && $request->movie_id != $movie_id)
+            return Response::create('URL parameter movie_id and nickname must be equal to json body attributes', 422);
 
         if (is_null($request->rating))
             return Response::create('JSON attribute rating must not be null', 422);
         //TODO: Validate that rating is an interger within the range
-        $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->first();
+        $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie_id)->first();
 
         if (is_null($userMovieRating)) {
             $userMovieRating = new UserMovieRating();
         }
-        $userMovieRating->user_id = $request->user_id;
+        $userMovieRating->user_id = $user->id;
         $userMovieRating->movie_id = $request->movie_id;
         $userMovieRating->rating = $request->rating;
         $userMovieRating->save();
