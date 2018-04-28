@@ -92,7 +92,7 @@ class WatchListController extends Controller
         $seenList = SeenList::where('user_id', $user->id)->first();
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList)->where('movie_id', $movie->id)->first();
 
-        if (!is_null($seenListMovie))co
+        if (!is_null($seenListMovie))
             $seenListMovie->delete();
 
         //TODO: implement better response
