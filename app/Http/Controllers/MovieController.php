@@ -40,7 +40,7 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         //Validation
-        if ($request->movie_code == null || $request->movie_data == null)
+        if (is_null($request->movie_code) || is_null($request->movie_data))
             return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
         //TODO: Validate movie_code and movie_data for semantics
 
@@ -85,13 +85,13 @@ class MovieController extends Controller
     public function update(Request $request, $movie_id)
     {
         //Validation
-        if ($request->movie_code == null || $request->movie_data == null)
+        if (is_null($request->movie_code)|| is_null($request->movie_data))
             return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
         //TODO: Validate movie_code and movie_data for semantics
 
         $movie = Movie::find($movie_id);
 
-        if ($movie == null) {
+        if (is_null($movie)) {
             $movie = new Movie();
         }
         $movie->movie_code = $request->movie_code;

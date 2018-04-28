@@ -65,7 +65,7 @@ class SeenListController extends Controller
         //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
         $seenList = User::find($user_id)->seenList;
 
-        if ($seenList == null)
+        if (is_null($seenList))
             return Response::create('No such resource!',404);
 
         return new MovieCollection($seenList->movies()->paginate(20));
@@ -111,8 +111,11 @@ class SeenListController extends Controller
 
         $movie = Movie::find($movie_id);
 
-        if ($movie == null) {
-            $movie = new Movie;
+        if (is_null($movie)) {
+            if ($request->isMethod('put'))
+                return Response::create('Resource not found. Use POST to add a movie to the list', 404);
+            if ($request->isMethod('post'))
+                $movie = new Movie();
         }
 
         $movie->movie_code = $movie_id;
@@ -121,12 +124,12 @@ class SeenListController extends Controller
 
         $seenList = SeenList::where('user_id', $user_id)->first();
 
-        if ($seenList == null)
+        if (is_null($seenList))
             return Response::create('no such user', 404);
 
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->first();
 
-        if ($seenListMovie == null) {
+        if (is_null($seenListMovie)) {
             $seenListMovie = new SeenListMovie();
             $seenListMovie->seen_list_id = $seenList->id;
             $seenListMovie->movie_id = $movie_id;
@@ -136,10 +139,13 @@ class SeenListController extends Controller
         //Check if movie is already in watchlist and remove
         $watchList = WatchList::where('user_id', $user_id)->first();
         $watchListMovie = WatchListMovie::where('watch_list_id', $watchList)->where('movie_id', $movie_id)->first();
-        if ($watchListMovie != null)
+        if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
         //TODO: implement better response
+        if ($request->isMethod('post'))
+            return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', ulr('/')->full."/".$movie->id);
+
         return (new MovieResource($movie))->response()->setStatusCode(201);
     }
 
@@ -160,13 +166,13 @@ class SeenListController extends Controller
 
         $seenList = SeenList::where('user_id', $user_id)->first(); //TODO: User more destinct primary keys
 
-        if ($seenList == null)
+        if (is_null($seenList))
             return Response::create('no such user', 404);
 
         //TODO: Merge Transactions
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie_id)->first();
 
-        if ($seenListMovie == null)
+        if (is_null($seenListMovie))
             return Response::create('no such movie in watch list', 404);
 
         $movie = Movie::where('movie_id', $movie_id)->first();

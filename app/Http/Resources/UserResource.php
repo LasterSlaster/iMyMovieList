@@ -5,6 +5,8 @@ namespace App\Http\Resources;
 use Illuminate\Http\Resources\Json\Resource;
 use App\SeenList;
 use App\WatchList;
+use App\SeenListMovie;
+use App\WatchListMovie;
 
 class UserResource extends Resource
 {
@@ -18,17 +20,19 @@ class UserResource extends Resource
     {
         $seenList = SeenList::where('user_id', $this->id)->first();
         //$seenListMovieCount = $seenList->movies()->count(); //TODO: Check if its possible to call the count function at this point
-        $seenListMovieCount = SeenListMovie::where('seenList_id', $seenList->id)->count();
+        $seenListMovieCount = SeenListMovie::where('seen_list_id', $seenList->id)->count();
 
         $watchList = WatchList::where('user_id', $this->id)->first();
         //$watchListMovieCount = $watchList->movies()->count();
-        $watchListMovieCount = WatchListMovie::where('watchList_id', $watchList->id)->count();
+        $watchListMovieCount = WatchListMovie::where('watch_list_id', $watchList->id)->count();
 
         return [
             'id' => $this->id,
             'name' => $this->name,
             'surname' => $this->surname,
             'role' => $this->role,
+            'watchlist' => url('/')."/api/users/".$this->id."/watchlist",
+            'seenlist' => url('/')."/api/users/".$this->id."/seenlist",
             'seenListCount' => $seenListMovieCount,
             'watchListCount' => $watchListMovieCount
         ];

@@ -27,7 +27,7 @@ class CommentController extends Controller
     {
         $comments = Comment::paginate(20);
         //TODO: Check if null value is possible for paginate
-        if ($comments == null)
+        if (is_null($comments))
             return Response::create('No comments available', 404);
 
         return new CommentCollection($comments);
@@ -44,12 +44,17 @@ class CommentController extends Controller
     {
         $comments = Comment::where('movie_id', $movie_id)->paginate(20);
 
-        if ($comments == null)
+        if (is_null($comments))
             return Response::create('No comments to movie: ' . $movie_id . ' available', 404);
 
-        // find comment to current user an add it to the colleciton with ->merge()
+        //find current user comment
+        $userComment = Comment::where('user_id', JWTAuth::parseToken()->toUser()->id)->where('movie_id', $movie_id)->first();
+        //TODO: Check behavior on not existing comment!!!
         // Create collections first then paginate
-        return new CommentCollection($comments);
+        return (new CommentCollection($comments))
+            ->additional([
+                'user' => json_encode($userComment)
+        ]);
     }
 
     /**
@@ -69,7 +74,7 @@ class CommentController extends Controller
 
         $comments = Comment::where('user_id', $user_id)->paginate(20);
 
-        if ($comments == null)
+        if (is_null($comments))
             return Response::create('No comments to movie: ' . $user_id . ' available', 404);
 
         return new CommentCollection($comments);
@@ -96,7 +101,7 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //Validation
-        if ($request->movie_id == null || $request->user_id == null)
+        if (is_null($request->movie_id) || is_null($request->user_id))
             return Response::create('JSON must contain a movie_id and a user_id', 422);
 
         $authUser = JWTAuth::parseToken()->toUser();
@@ -107,7 +112,7 @@ class CommentController extends Controller
         $relatedMovie = Movie::find($request->movie_id);
         $relatedUser = User::find($request->user_id);
 
-        if ($relatedMovie == null || $relatedUser == null)
+        if (is_null($relatedMovie)|| is_null($relatedUser))
             return Response::create('JSON body must contain a valid user and movie id', 422);
 
         $comment = new Comment();
@@ -157,7 +162,7 @@ class CommentController extends Controller
 
         $comment = Comment::find($comment_id);
 
-        if ($comment == null) {
+        if (is_null($comment)) {
             $comment = new Comment();
         }
 

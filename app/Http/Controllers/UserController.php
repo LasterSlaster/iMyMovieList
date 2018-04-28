@@ -74,7 +74,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return new UserCollection(User::paginate(20));
+        return new UserCollection(UserResource::collection(User::paginate(20)));
     }
 
     /**
@@ -135,7 +135,7 @@ class UserController extends Controller
         }
         $user = User::findOrFail($user_id);
         //Validation
-        if ($request->role == null && ($request->role != 'admin' || $request->role != 'user'))
+        if (is_null($request->role) && ($request->role != 'admin' || $request->role != 'user'))
             return Response::create('JSON body must contain attribute role. Possible values: admin|user', 422);
 
         $user->role = $request->role;

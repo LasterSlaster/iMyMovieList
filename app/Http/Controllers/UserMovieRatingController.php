@@ -39,9 +39,9 @@ class UserMovieRatingController extends Controller
     public function store(Request $request)
     {
         //Validation
-        if ($request->movie_id == null || $request->user_id == null)
+        if (is_null($request->movie_id) || is_null($request->user_id))
             return Response::create('JSON body must contain attributes movie_id, user_id and rating', 422);
-        if (Movie::find($request->user_id) == null || User::find($request->movie_id) == null)
+        if (is_null(Movie::find($request->user_id)) || is_null(User::find($request->movie_id)))
             return Response::create('User or movie id is not valid', 422);
 
         $authUser = JWTAuth::parseToken()->toUser();
@@ -71,7 +71,7 @@ class UserMovieRatingController extends Controller
     {
         $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->first();
 
-        if ($userMovieRating == null)
+        if (is_null($userMovieRating))
             return Response::create('Specified resource not found', 404);
 
         return new UserMovieRatingResource($userMovieRating);
@@ -107,12 +107,12 @@ class UserMovieRatingController extends Controller
         if ($request->user_id != $user_id && $request->movie_id != $movie_id)
             return Response::create('URL parameter movie_id and user_id must be equal to json body attributes', 422);
 
-        if ($request->rating == null)
+        if (is_null($request->rating))
             return Response::create('JSON attribute rating must not be null', 422);
         //TODO: Validate that rating is an interger within the range
         $userMovieRating = UserMovieRating::where('user_id', $user_id)->where('movie_id', $movie_id)->first();
 
-        if ($userMovieRating == null) {
+        if (is_null($userMovieRating)) {
             $userMovieRating = new UserMovieRating();
         }
         $userMovieRating->user_id = $request->user_id;
