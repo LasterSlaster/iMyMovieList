@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class SeenListMovie extends Pivot
 {
-    public $timestamps = false;
 
     /**
      * The table associated with the model.
@@ -14,4 +13,8 @@ class SeenListMovie extends Pivot
      * @var string
      */
     protected $table = 'seen_list_movies';
+
+    public function movie() {
+        return $this->belongsTo('App\Movie');
+    }
 }

@@ -24,6 +24,7 @@ class CreateWatchListMoviesTable extends Migration
                 ->references('id')->on('movies')
                 ->onDelete('cascade');
             $table->unique(['watch_list_id', 'movie_id']);
+            $table->timestamps();
         });
     }
 

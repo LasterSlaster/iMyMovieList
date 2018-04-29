@@ -24,6 +24,7 @@ class CreateSeenListMoviesTable extends Migration
                 ->references('id')->on('movies')
                 ->onDelete('cascade');
             $table->unique(['seen_list_id', 'movie_id']);
+            $table->timestamps();
         });
     }
 

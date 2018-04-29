@@ -11,6 +11,7 @@ use App\User;
 use App\Http\Resources\MovieResource;
 use App\Http\Resources\MovieCollection;
 use App\Http\Resources\SeenListCollection;
+use App\Http\Resources\SeenListMovieCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JWTAuth;
@@ -78,7 +79,7 @@ class SeenListController extends Controller
 
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
         if (!is_null($seenListMovie))
-            return Response::create('Resource is already present use PUT to update', 400);
+            return Response::create('Resource is already present use PUT to update', 405)->header('Allow', 'PUT');
 
         $seenListMovie = new SeenListMovie();
         $seenListMovie->seen_list_id = $seenList->id;
@@ -92,8 +93,7 @@ class SeenListController extends Controller
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
-        //TODO: implement better response
-        return (new MovieResource($movie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
+        return new SeenListMovieResource($seenListMovie);
     }
 
     /**
@@ -116,7 +116,7 @@ class SeenListController extends Controller
         if (is_null($seenList))
             return Response::create('No such resource!',404);
 
-        return new MovieCollection($seenList->movies()->paginate(20));
+        return new SeenListMovieCollection(SeenListMovie::where('seen_list_id',$seenList->id)->orderBy('created_at', 'desc')->paginate(20));
     }
 
     /**
@@ -150,12 +150,12 @@ class SeenListController extends Controller
             return Response::create('Not authorized to access this resource', 403);
 
         if ($request->movie_code != $movie_code)
-            return Response::create('json attribute movie_code and URL keyare not the same!',400);
+            return Response::create('json attribute movie_code and URL key are not the same!',422);
 
         if ($request->movie_data != '') {
             //TODO: validate json content
         } else {
-            return Response::create('attribute movie_data is missing or empty', 400);
+            return Response::create('attribute movie_data is missing or empty', 422);
         }
 
         $movie = Movie::where('movie_code', $movie_code)->first();
@@ -188,8 +188,7 @@ class SeenListController extends Controller
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
-        //TODO: implement better response
-        return (new MovieResource($movie))->response()->setStatusCode(201);
+        return new SeenListMovieResource($seenListMovie);
     }
 
     /**
@@ -222,7 +221,9 @@ class SeenListController extends Controller
             return Response::create('no such movie in watch list', 404);
 
         $seenListMovie->delete();
+        //return new watchlist
+        $newSeenList = $seenList->movies()->paginate(20);
 
-        return (new MovieResource($movie))->response()->setStatusCode(200);
+        return (new MovieCollection($newSeenList))->response()->setStatusCode(200);
     }
 }
