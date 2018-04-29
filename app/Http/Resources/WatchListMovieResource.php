@@ -3,7 +3,6 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
-use Illuminate\Support\Facades\DB;
 
 class WatchListMovieResource extends Resource
 {

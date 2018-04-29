@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Resources\WatchListCollection;
-use App\Http\Resources\MovieCollection;
 use App\Http\Resources\WatchListMovieResource;
 use App\Http\Resources\WatchListMovieCollection;
 use App\WatchList;
@@ -96,7 +95,7 @@ class WatchListController extends Controller
         if (!is_null($seenListMovie))
             $seenListMovie->delete();
 
-        return (new WatchListMovieResource(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->get()))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
+        return (new WatchListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
     }
 
     /**
@@ -229,6 +228,6 @@ class WatchListController extends Controller
 
         $watchListMovie->delete();
 
-        return (new WatchListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->get()))->response()->setStatusCode(200);
+        return (new WatchListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(200);
     }
 }

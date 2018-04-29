@@ -15,7 +15,7 @@ class WatchListMovieCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'data' => new WatchListMovieResource($this->collection)
+            'data' => WatchListMovieResource::collection($this->collection)
         ];
     }
 }

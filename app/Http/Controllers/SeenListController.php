@@ -92,7 +92,7 @@ class SeenListController extends Controller
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
-        return (new SeenListMovieResource(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->get()))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
+        return (new SeenListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
     }
 
     /**
@@ -220,6 +220,6 @@ class SeenListController extends Controller
 
         $seenListMovie->delete();
 
-        return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->get()))->response()->setStatusCode(200);
+        return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(200);
     }
 }
