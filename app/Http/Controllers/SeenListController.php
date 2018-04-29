@@ -104,11 +104,6 @@ class SeenListController extends Controller
     public function showList($nickname)
     {
         //Validation
-        $authUser = JWTAuth::parseToken()->toUser();
-
-        if ($authUser->nickname != $nickname)
-            return Response::create('Not authorized to access this resource', 403);
-
         $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
 
         if (is_null($seenList))
@@ -119,11 +114,6 @@ class SeenListController extends Controller
 
     public function showMovie($nickname, $movie_code) {
         //Validation
-        $authUser = JWTAuth::parseToken()->toUser();
-
-        if ($authUser->nickname != $nickname)
-            return Response::create('Not authorized to access this resource', 403);
-
         $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
 
         if (is_null($seenList))

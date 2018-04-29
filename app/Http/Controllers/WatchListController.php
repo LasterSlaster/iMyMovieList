@@ -107,28 +107,16 @@ class WatchListController extends Controller
     public function showList($nickname)
     {
         //Validation
-        $authUser = JWTAuth::parseToken()->toUser();
-
-        if ($authUser->nickname != $nickname)
-            return Response::create('Not authorized to access this resource', 403);
-
-        //$watchList = DB::table('watch_list_movies')->join('watch_lists', 'watch_list_movies.watch_list_id', '=', 'watch_lists.id')->join('movies', 'watch_list_movies.movie_id', '=', 'movies.id')->where('watch_lists.user_id', $user_id)->paginate(20);
-
         $watchList = User::where('nickname', $nickname)->firstOrFail()->watchList;
 
         if (is_null($watchList))
             return Response::create('No such resource!',404);
-        //TODO: Replace movie timestamps with the timestamps from table watch_list_movies
 
         return new WatchListMovieCollection(WatchListMovie::where('watch_list_id',$watchList->id)->orderBy('created_at', 'desc')->paginate(20));
     }
 
-    public function showMovie($nickname, $movie_code) {
-        //Validation
-        $authUser = JWTAuth::parseToken()->toUser();
-
-        if ($authUser->nickname != $nickname)
-            return Response::create('Not authorized to access this resource', 403);
+    public function showMovie($nickname, $movie_code)
+    {
 
         $watchList = User::where('nickname', $nickname)->firstOrFail()->watchList;
 

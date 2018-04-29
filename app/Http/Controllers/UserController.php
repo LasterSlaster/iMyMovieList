@@ -16,6 +16,7 @@ class UserController extends Controller
 {
 
     public function signup(Request $request) {
+        $request->nickname = strtolower($request->nickname);
         $this->validate($request, [
             'nickname' => 'required|unique:users',
             'email' => 'required|email|unique:users',
@@ -72,7 +73,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return new UserCollection(User::paginate(20));
+            return new UserCollection(User::paginate(20));
     }
 
     /**
