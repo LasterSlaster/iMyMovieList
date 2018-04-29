@@ -8,10 +8,9 @@ use App\WatchListMovie;
 use App\WatchList;
 use App\Movie;
 use App\User;
-use App\Http\Resources\MovieResource;
-use App\Http\Resources\MovieCollection;
 use App\Http\Resources\SeenListCollection;
 use App\Http\Resources\SeenListMovieCollection;
+use App\Http\Resources\SeenListMovieResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JWTAuth;
@@ -93,7 +92,7 @@ class SeenListController extends Controller
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
-        return new SeenListMovieResource($seenListMovie);
+        return (new SeenListMovieResource(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->get()))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
     }
 
     /**
@@ -110,7 +109,6 @@ class SeenListController extends Controller
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        //$seenList = DB::table('seen_list_movies')->join('seen_lists', 'seen_list_movies.seen_list_id', '=', 'seen_lists.id')->join('movies', 'seen_list_movies.movie_id', '=', 'movies.id')->where('seen_lists.user_id', $user_id)->get();
         $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
 
         if (is_null($seenList))
@@ -221,9 +219,7 @@ class SeenListController extends Controller
             return Response::create('no such movie in watch list', 404);
 
         $seenListMovie->delete();
-        //return new watchlist
-        $newSeenList = $seenList->movies()->paginate(20);
 
-        return (new MovieCollection($newSeenList))->response()->setStatusCode(200);
+        return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->get()))->response()->setStatusCode(200);
     }
 }
