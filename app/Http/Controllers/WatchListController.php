@@ -6,14 +6,14 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use App\Http\Resources\WatchListCollection;
 use App\Http\Resources\MovieCollection;
-use App\Http\Resources\MovieResource;
+use App\Http\Resources\WatchListMovieResource;
+use App\Http\Resources\WatchListMovieCollection;
 use App\WatchList;
 use App\SeenList;
 use App\WatchListMovie;
 use App\SeenListMovie;
 use App\Movie;
 use App\User;
-use Illuminate\Support\Facades\DB;
 use JWTAuth;
 
 /**
