@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class WatchListMovie extends Pivot
 {
+    public $timestamps = true;
     /**
      * The table associated with the model.
      *

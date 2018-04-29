@@ -87,12 +87,12 @@ class SeenListController extends Controller
 
         //Check if movie is already in watchlist and remove
         $watchList = watchList::where('user_id', $user->id)->first();
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $request->id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
 
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
-        return (new SeenListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
+        return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
     }
 
     /**
@@ -101,7 +101,7 @@ class SeenListController extends Controller
      * @param  int $user_id
      * @return \Illuminate\Http\Response
      */
-    public function show($nickname)
+    public function showList($nickname)
     {
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
@@ -115,6 +115,23 @@ class SeenListController extends Controller
             return Response::create('No such resource!',404);
 
         return new SeenListMovieCollection(SeenListMovie::where('seen_list_id',$seenList->id)->orderBy('created_at', 'desc')->paginate(20));
+    }
+
+    public function showMovie($nickname, $movie_code) {
+        //Validation
+        $authUser = JWTAuth::parseToken()->toUser();
+
+        if ($authUser->nickname != $nickname)
+            return Response::create('Not authorized to access this resource', 403);
+
+        $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
+
+        if (is_null($seenList))
+            return Response::create('No such resource!',404);
+
+        $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
+
+        return new SeenListMovieResource(SeenListMovie::where('seen_list_id',$seenList->id)->where('movie_id', $movie->id)->firstOrFail());
     }
 
     /**
