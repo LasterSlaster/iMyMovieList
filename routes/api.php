@@ -28,13 +28,15 @@ Route::middleware('auth.jwt')->group(function() {
     Route::delete('/users/{nickname}', 'UserController@destroy');
 
     Route::get('/seenlists', 'SeenListController@index');
-    Route::get('/users/{nickname}/seenlist/', 'SeenListController@show');
+    Route::get('/users/{nickname}/seenlist/', 'SeenListController@showList');
+    Route::get('/users/{nickname}/seenlist/movies/{movie_code}', 'SeenListController@showMovie');
     Route::post('/users/{nickname}/seenlist/movies/', 'SeenListController@store');
     //Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
     Route::delete('/users/{nickname}/seenlist/movies/{movie_code}', 'SeenListController@destroy');
 
     Route::get('/watchlists', 'WatchListController@index');
-    Route::get('/users/{nickname}/watchlist/', 'WatchListController@show');
+    Route::get('/users/{nickname}/watchlist/', 'WatchListController@showList');
+    Route::get('/users/{nickname}/watchlist/movies/{movie_code}', 'WatchListController@showMovie');
     Route::post('/users/{nickname}/watchlist/movies/', 'WatchListController@store');
     //Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
     Route::delete('/users/{nickname}/watchlist/movies/{movie_code}', 'WatchListController@destroy');
