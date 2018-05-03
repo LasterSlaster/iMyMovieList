@@ -1,0 +1,80 @@
+section.topSection {
+    margin-top: 62.23px;
+    position: relative;
+    background-color: #3d4349;
+    background: url("../img/welcome/popcorn.jpg") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+}
+
+section.topSection .overlay {
+    position: absolute;
+    background-color: #212529;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+}
+
+@media (min-width: 768px) {
+    section.topSection {
+        padding-top: 10rem;
+        padding-bottom: 10rem;
+    }
+}
+
+.galery .feature-text {
+    padding: 2.5rem;
+}
+
+.galery .feature-img {
+    min-height: 30rem;
+    background-size: cover;
+}
+
+@media (min-width: 768px) {
+    .galery .feature-text {
+        padding: 7rem;
+    }
+}
+
+.feature {
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+}
+
+.feature .features-item {
+    max-width: 20rem;
+    font-size: 6rem;
+}
+
+.feature .features-item .features-icon {
+    height: 7rem;
+}
+
+.regist-bottom {
+    position: relative;
+    background-color: #343a40;
+    background: url("../img/welcome/people.jpg") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    padding-top: 7rem;
+    padding-bottom: 7rem;
+}
+
+.regist-bottom .overlay {
+    position: absolute;
+    background-color: #1b2127;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+}
