@@ -19,7 +19,7 @@ class UserController extends Controller
         $requestData = $request->all();
         $requestData['nickname'] = strtolower($request->nickname);
        // $request->nickname = strtolower($request->nickname);
-        $this->validate($request, [
+        $this->validate($requestData, [
             'nickname' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required'
