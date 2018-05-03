@@ -16,7 +16,8 @@ class UserController extends Controller
 {
 
     public function signup(Request $request) {
-        $request->replace(array('nickname' => strtolower($request->nickname)));
+        $requestData = $request->all();
+        $requestData['nickname'] = strtolower($request->nickname);
        // $request->nickname = strtolower($request->nickname);
         $this->validate($request, [
             'nickname' => 'required|unique:users',
