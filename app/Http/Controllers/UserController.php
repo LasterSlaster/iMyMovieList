@@ -17,7 +17,7 @@ class UserController extends Controller
 
     public function signup(Request $request) {
         $nicknameTemp = $request->input('nickname');
-        $request->merge(['nickname' => strtolower($request->nickname)]);
+        $request->merge(['nickname' => strtolower($request->input('nickname'))]);
 
         $this->validate($request, [
             'nickname' => 'required|unique:users',
@@ -51,7 +51,7 @@ class UserController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
-        $credentials = ['email' => strtolower($request->input(email)), 'password' => base64_decode($request->input(password))];
+        $credentials = ['email' => strtolower($request->input('email')), 'password' => base64_decode($request->input('password'))];
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
