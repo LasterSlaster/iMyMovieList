@@ -1,6 +1,6 @@
 @extends('master') @section('stylesheets')
 
-<link rel="stylesheet" type="text/css" href="{{ asset('css/welcome.css') }}"> 
+<link rel="stylesheet" type="text/css" href="/css/welcome.css">
 
 @endsection 
 

@@ -6,10 +6,10 @@
         <span class="navbar-toggler-icon"></span>
       </button>
       <a class="navbar-brand text-center d-none d-md-inline-block" href="#">
-        <img src="{{ asset('img/imml_logo.png') }}" height="36" class="d-inline-block align-top" alt="">
+        <img src="/img/imml_logo.png" height="36" class="d-inline-block align-top" alt="">
       </a>
       <a class="navbar-brand text-center d-md-none mx-auto" href="#">
-        <img src="{{ asset('img/imml_logo_mobile.png') }}" height="36" class="d-inline-block align-top" alt="">
+        <img src="/img/imml_logo_mobile.png" height="36" class="d-inline-block align-top" alt="">
       </a>
       <div class="collapse navbar-collapse" id="navbarText">
         <ul class="navbar-nav ml-auto">
