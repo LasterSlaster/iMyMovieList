@@ -9,10 +9,14 @@ use App\Movie;
 use Illuminate\Http\Response;
 use JWTAuth;
 
+/**
+ * Class MovieController - Controller for requests to movie resources
+ * @package App\Http\Controllers
+ */
 class MovieController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Return a listing of the movie resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -32,7 +36,7 @@ class MovieController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created movie resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -53,9 +57,9 @@ class MovieController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified movie resource.
      *
-     * @param  Movie $movie
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function show($movie_code)
@@ -75,10 +79,10 @@ class MovieController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified movie resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Movie $movie
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $movie_code)

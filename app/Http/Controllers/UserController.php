@@ -12,11 +12,22 @@ use Illuminate\Http\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
 
+/**
+ * Class UserController - Controller for requests to user resources
+ * @package App\Http\Controllers
+ */
 class UserController extends Controller
 {
 
+    /**
+     * Register a new user and store it in storage
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function signup(Request $request) {
         $nicknameTemp = $request->input('nickname');
+        // Convert nickname to lower case to reject differently cased names
         $request->merge(['nickname' => strtolower($request->input('nickname'))]);
 
         $this->validate($request, [
@@ -25,15 +36,18 @@ class UserController extends Controller
             'password' => 'required'
         ]);
 
+        // Add original cased nickname
         $request->merge(['nickname' => $nicknameTemp]);
 
         $user = new User([
             'nickname' => $request->input('nickname'),
             'email' => $request->input('email'),
+            // Decode the encoded password from the request and encrypt it again to store it
             'password' => bcrypt(base64_decode($request->input('password')))
         ]);
         $user->save();
 
+        //Create movie lists for new user
         $seenList = new SeenList();
         $seenList->user_id = $user->id;
         $seenList->save();
@@ -46,11 +60,18 @@ class UserController extends Controller
         ], 201);
     }
 
+    /**
+     * Login an existing user and receive an authorization token
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function signin(Request $request) {
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required'
         ]);
+        // decode password
         $credentials = ['email' => strtolower($request->input('email')), 'password' => base64_decode($request->input('password'))];
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
@@ -71,7 +92,7 @@ class UserController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the user resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -102,9 +123,9 @@ class UserController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified user resource.
      *
-     * @param  User $user
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function show($nickname)
@@ -124,10 +145,10 @@ class UserController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified user resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  User $user
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $nickname)
@@ -148,9 +169,9 @@ class UserController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified user resource from storage.
      *
-     * @param  User $user
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function destroy($nickname)

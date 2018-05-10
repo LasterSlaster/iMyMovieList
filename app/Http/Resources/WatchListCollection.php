@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
+/**
+ * Class WatchListCollection for Collection to JSON conversion
+ * @package App\Http\Resources
+ */
 class WatchListCollection extends ResourceCollection
 {
     /**

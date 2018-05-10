@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Class SeenListMovieResource for Collection to JSON conversion
+ * @package App\Http\Resources
+ */
 class SeenListMovieResource extends Resource
 {
     /**

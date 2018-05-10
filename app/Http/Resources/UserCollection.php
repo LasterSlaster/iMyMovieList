@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
+/**
+ * Class UserCollection for Collection to JSON conversion
+ * @package App\Http\Resources
+ */
 class UserCollection extends ResourceCollection
 {
     /**

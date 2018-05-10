@@ -4,6 +4,10 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+/**
+ * Class CommentResource for Collection to JSON conversion
+ * @package App\Http\Resources
+ */
 class CommentResource extends Resource
 {
     /**
