@@ -17,6 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(UserMovieRatingsTableSeeder::class);
         $this->call(WatchListMoviesTableSeeder::class);
         $this->call(SeenListMoviesTableSeeder::class);
-        $this->call(UserTableAdminSeeder::class);
+        $this->call(UsersTableAdminSeeder::class);
     }
 }
