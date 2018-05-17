@@ -31,4 +31,13 @@ class WatchListMovie extends Pivot
     public function movie() {
         return $this->belongsTo('App\Movie');
     }
+
+    /**
+     * Provides access to the related watchList to this watchListMovie
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function watchlist() {
+        return $this->belongsTo('App\WatchList', 'watch_list_id');
+    }
 }

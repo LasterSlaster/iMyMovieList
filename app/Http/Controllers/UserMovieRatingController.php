@@ -7,6 +7,8 @@ use App\Http\Resources\UserMovieRatingResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JWTAuth;
+use App\User;
+use App\Movie;
 
 /**
  * Class UserMovieRatingController - Controller for requests to userMovieRating resources
@@ -109,7 +111,7 @@ class UserMovieRatingController extends Controller
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $nickname)
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
         $user = User::where('nickname', $nickname)->firstOrFail();
         if ($request->nickname != $nickname && $request->movie_code != $movie_code)

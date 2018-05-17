@@ -33,4 +33,13 @@ class SeenListMovie extends Pivot
     public function movie() {
         return $this->belongsTo('App\Movie');
     }
+
+    /**
+     * Provides access to the related seenList to this seenListMovie
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function seenlist() {
+        return $this->belongsTo('App\SeenList', 'seen_list_id');
+    }
 }
