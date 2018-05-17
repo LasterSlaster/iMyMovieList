@@ -22,8 +22,13 @@ class UsersTableAdminSeeder extends Seeder
         $adminDima->password = 'admin';
         $adminDima->remember_token = str_random(10);
         $adminDima->role = 'admin';
-        $adminDima->watchList = new WatchList(['user_id' => $adminDima->id]);
-        $adminDima->seenList = new SeenList(['user_id' => $adminDima->id]);
+        $adminDima->save();
+
+        $watchlist = new WatchList(['user_id' => $adminDima->id]);
+        $watchlist->save();
+        $seenlist = new SeenList(['user_id' => $adminDima->id]);
+
+        $seenlist->save();
 
         $adminMarius = new \App\User();
         $adminMarius->nickname = 'marius';
@@ -31,7 +36,12 @@ class UsersTableAdminSeeder extends Seeder
         $adminMarius->password = 'admin';
         $adminMarius->remember_token = str_random(10);
         $adminMarius->role = 'admin';
-        $adminMarius->watchList = new WatchList(['user_id' => $adminMarius->id]);
-        $adminMarius->seenList = new SeenList(['user_id' => $adminMarius->id]);
+        $adminMarius->save();
+
+        $watchlist = new WatchList(['user_id' => $adminMarius->id]);
+        $watchlist->save();
+        $seenlist = new SeenList(['user_id' => $adminMarius->id]);
+        $seenlist->save();
+
     }
 }
