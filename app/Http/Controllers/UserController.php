@@ -11,6 +11,8 @@ use App\Http\Resources\UserResource;
 use Illuminate\Http\Response;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Auth\Passwords\CanResetPassword;
 
 /**
  * Class UserController - Controller for requests to user resources
@@ -18,7 +20,8 @@ use JWTAuth;
  */
 class UserController extends Controller
 {
-
+    use Notifiable;
+    use CanResetPassword;
     /**
      * Register a new user and store it in storage
      *
@@ -92,6 +95,34 @@ class UserController extends Controller
     }
 
     /**
+     * Reset current password.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function forgotpw()
+    {
+
+    }
+
+    /**
+     * Change the current password to a new one.
+     *
+     * @return \Illuminate\Http\Response
+     * @param  string $nickname
+     * @return \Illuminate\Http\Response
+     */
+    public function changepw(Request $request, $nickname)
+    {
+        $authUser = JWTAuth::parseToken()->toUser();
+        if ($authUser->nickname != $nickname) {
+            return Response::create('Not authorized to access this resource', 403);
+        }
+
+
+    }
+
+
+    /**
      * Display a listing of the user resource.
      *
      * @return \Illuminate\Http\Response
@@ -155,7 +186,7 @@ class UserController extends Controller
     {
         $authUser = JWTAuth::parseToken()->toUser();
         if ($authUser->role != 'admin') {
-            return Response::create('Not authoritzed to access this resource', 403);
+            return Response::create('Not authorized to access this resource', 403);
         }
         $user = User::where('nickname', $nickname)->firstOrFail();
         //Validation
@@ -178,7 +209,7 @@ class UserController extends Controller
     {
         $user = User::where('nickname', $nickname)->firstOrFail();
         $authUser = JWTAuth::parseToken()->toUser();
-        if (!($authUser->nickname != $nickname || $authUser->role != 'admin')) {
+        if ($authUser->nickname != $nickname || $authUser->role != 'admin') {
             return Response::create('Not authorized to access this resource', 403);
         }
         //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model

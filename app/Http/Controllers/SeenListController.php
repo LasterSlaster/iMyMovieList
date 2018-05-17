@@ -9,6 +9,7 @@ use App\WatchList;
 use App\Movie;
 use App\User;
 use App\Http\Resources\SeenListCollection;
+use App\Http\Resources\WatchListMovieCollection;
 use App\Http\Resources\SeenListMovieCollection;
 use App\Http\Resources\SeenListMovieResource;
 use Illuminate\Http\Request;

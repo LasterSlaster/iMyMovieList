@@ -11,6 +11,7 @@ use App\WatchList;
 use App\SeenList;
 use App\WatchListMovie;
 use App\SeenListMovie;
+use App\Http\Resources\SeenListMovieCollection;
 use App\Movie;
 use App\User;
 use JWTAuth;
