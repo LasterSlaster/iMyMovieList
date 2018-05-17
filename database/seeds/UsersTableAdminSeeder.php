@@ -19,7 +19,7 @@ class UsersTableAdminSeeder extends Seeder
         $adminDima = new \App\User();
         $adminDima->nickname = 'dima';
         $adminDima->email = 'dima@email.de';
-        $adminDima->password = 'admin';
+        $adminDima->password = bcrypt('admin');
         $adminDima->remember_token = str_random(10);
         $adminDima->role = 'admin';
         $adminDima->save();
@@ -33,7 +33,7 @@ class UsersTableAdminSeeder extends Seeder
         $adminMarius = new \App\User();
         $adminMarius->nickname = 'marius';
         $adminMarius->email = 'marius@email.de';
-        $adminMarius->password = 'admin';
+        $adminMarius->password = bcrypt('admin');
         $adminMarius->remember_token = str_random(10);
         $adminMarius->role = 'admin';
         $adminMarius->save();
