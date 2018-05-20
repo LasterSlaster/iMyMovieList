@@ -217,7 +217,7 @@ class UserController extends Controller
             $user->userMovieRatings()->delete();
             $user->comments()->delete();
             $user->delete();
-            return new UserCollection().paginate(20);
+            return new UserCollection(User::paginate(20));
         }
 
         return Response::create('Not authorized to access this resource', 403);
