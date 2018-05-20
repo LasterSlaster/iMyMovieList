@@ -208,7 +208,10 @@ class UserController extends Controller
     {
         $user = User::where('nickname', $nickname)->firstOrFail();
         $authUser = JWTAuth::parseToken()->toUser();
-        if ($authUser->nickname != $nickname || $authUser->role != 'admin') {
+        if ($authUser->nickname != $nickname ) {
+            return Response::create('Not authorized to access this resource', 403);
+        }
+        if ( $authUser->role != 'admin') {
             return Response::create('Not authorized to access this resource', 403);
         }
         //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model
