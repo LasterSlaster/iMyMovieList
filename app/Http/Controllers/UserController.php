@@ -208,20 +208,18 @@ class UserController extends Controller
     {
         $user = User::where('nickname', $nickname)->firstOrFail();
         $authUser = JWTAuth::parseToken()->toUser();
-        if ($authUser->nickname != $nickname ) {
-            return Response::create('Not authorized to access this resource', 403);
-        }
-        if ( $authUser->role != 'admin') {
-            return Response::create('Not authorized to access this resource', 403);
-        }
+
         //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model
         //Instead of deleting the user and all dependent entries try laravel soft delition
-        $user->seenList()->delete();
-        $user->watchList()->delete();
-        $user->userMovieRatings()->delete();
-        $user->comments()->delete();
-        $user->delete();
+        if ($authUser->nickname != $nickname && $authUser->role == 'admin') {
+            $user->seenList()->delete();
+            $user->watchList()->delete();
+            $user->userMovieRatings()->delete();
+            $user->comments()->delete();
+            $user->delete();
+            return new UserCollection().paginate(20);
+        }
 
-        return response('Deleted user '.$nickname, 200);
+        return Response::create('Not authorized to access this resource', 403);
     }
 }
