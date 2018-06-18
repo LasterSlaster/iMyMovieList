@@ -20,12 +20,13 @@ class SeenListMovieResource extends Resource
     {
         $user = $this->seenlist->user;
         $movie = $this->movie;
+        $rating = $user->userMovieRatings()->where('movie_id', $movie->id)->first();
 
         return [
             'movie_code' => $this->movie->movie_code,
             'movie_data' => $this->movie->movie_data,
             'created_at' => $this->created_at,
-            'rating' => ($user->userMovieRatings()->where('movie_id', $movie->id)->first())->rating
+            'rating' => $rating->rating
         ];
     }
 }
