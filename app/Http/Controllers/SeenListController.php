@@ -94,6 +94,7 @@ class SeenListController extends Controller
             $rating->movie_id = $movie->id;
         }
         $rating->rating = $request->rating;
+        $rating->save();
 
 
 
