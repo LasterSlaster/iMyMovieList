@@ -126,9 +126,13 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->search != null) {
+            return new UserCollection(User::where('nickname', $request->search)->orderBy('nickname', 'desc')->paginate(20));
+        } else {
             return new UserCollection(User::paginate(20));
+        }
     }
 
     /**
@@ -215,7 +219,7 @@ class UserController extends Controller
             $user->seenList()->delete();
             $user->watchList()->delete();
             $user->userMovieRatings()->delete();
-            $user->comments()->delete();
+            $user->comments()->dfelete();
             $user->delete();
             return new UserCollection(User::paginate(20));
         }
