@@ -20,9 +20,10 @@ class SeenListMovieResource extends Resource
     {
         $user = $this->seenlist->user;
         $movie = $this->movie;
+        $rating = 0;
 
-        if (is_null($userMovieRating = $user->userMovieRatings()->where('movie_id', $movie->id)->first()))
-            $rating = 0;
+        if (!is_null($userMovieRating = $user->userMovieRatings()->where('movie_id', $movie->id)->first()))
+            $rating = $userMovieRating->rating;
 
         return [
             'movie_code' => $this->movie->movie_code,
