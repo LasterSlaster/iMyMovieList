@@ -129,7 +129,7 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->search != null) {
-            return new UserCollection(User::where('nickname', $request->search)->orderBy('nickname', 'desc')->paginate(20));
+            return new UserCollection(User::where('nickname', 'like', '%'.$request->search.'%')->orderBy('nickname', 'desc')->paginate(20));
         } else {
             return new UserCollection(User::paginate(20));
         }
