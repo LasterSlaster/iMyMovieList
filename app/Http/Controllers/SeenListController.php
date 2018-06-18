@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\SeenListMovie;
 use App\SeenList;
+use App\UserMovieRating;
 use App\WatchListMovie;
 use App\WatchList;
 use App\Movie;
@@ -69,6 +70,10 @@ class SeenListController extends Controller
 
         if ($request->movie_code == '')
             return Response::create('attribute movie_code is missing or empty', 422);
+        if ($request->rating == '')
+            return Response::create('attribute rating is missing or empty', 422);
+        if ($request->rating < 1 || $request->rating > 5)
+            return Response::create('attribute rating must be a nuber between 1-5', 400);
 
         //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
@@ -82,6 +87,16 @@ class SeenListController extends Controller
             $movie->movie_data = $request->movie_data;
             $movie->save();
         }
+
+        if (is_null($rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first())) {
+            $rating = new UserMovieRating();
+            $rating->user_id = $user->id;
+            $rating->movie_id = $movie->id;
+        }
+        $rating->rating = $request->rating;
+
+
+
 
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
         if (!is_null($seenListMovie))
@@ -237,11 +252,14 @@ class SeenListController extends Controller
             return Response::create('No such movie', 404);
         //TODO: Merge Transactions
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
+        $rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
 
         if (is_null($seenListMovie))
             return Response::create('no such movie in watch list', 404);
 
         $seenListMovie->delete();
+        $rating->delete();
+
 
         return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(200);
     }
