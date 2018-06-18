@@ -116,7 +116,17 @@ class UserController extends Controller
         if ($authUser->nickname != $nickname) {
             return Response::create('Not authorized to access this resource', 403);
         }
+        if ($request->password_old == '' || $request->password_new == ''|| $request->password_confirmation == '') {
+            return Response::create('Request must contain a nickname, password and password_confirmation');
+        }
+        if (strcmp($request->password_new, $request->password_confirmation)) {
+            return Response::create('Old and new password must be equal', 400);
+        }
 
+        $authUser->password = bcrypt(base64_decode($request->password_new));
+        $authUser->save();
+
+        return Response::create('Change password successful', 200);
 
     }
 

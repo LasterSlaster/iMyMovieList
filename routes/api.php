@@ -19,12 +19,14 @@ use Illuminate\Http\Request;
 
 Route::post('/user/signup', 'UserController@signup');
 Route::post('/user/signin', 'UserController@signin');
+Route::post('/passwords/reset/{token?}', 'UserController@forgotpw');
 
 Route::middleware('auth.jwt')->group(function() {
 
     Route::get('/users', 'UserController@index');
     Route::get('/users/{nickname}', 'UserController@show');
     Route::patch('/users/{nickname}', 'UserController@update');
+    Route::post('/users/{nickname}/changepw', 'UserController@changepw');
     Route::delete('/users/{nickname}', 'UserController@destroy');
 
     Route::get('/seenlists', 'SeenListController@index');
