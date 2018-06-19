@@ -126,8 +126,9 @@ class UserController extends Controller
         $authUser->password = bcrypt(base64_decode($request->password_new));
         $authUser->save();
 
-        return Response::create('Changed password successfull', 200)->header('Content-Type', 'text/plain');
-
+        return response()->json([
+            'message' => 'Successfully changed password!'
+        ], 200);
     }
 
 
