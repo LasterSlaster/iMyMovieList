@@ -36,6 +36,16 @@ class ContactController extends Controller
                 'email' => $request->get('email'),
                 'user_message' => $request->get('message')
             ), function($message) use($request) {
+                $message->from('imymovielist@gmx.de', 'IMyMovieList');
+                $message->to($request->email, $request->name)->subject('Imymovielist_contact_request');
+            });
+
+        Mail::send('emails.contact_message_response',
+            array(
+                'name' => $request->get('name'),
+                'email' => $request->get('email'),
+                'user_message' => $request->get('message')
+            ), function($message) use($request) {
                 $message->from('imymovielist@gmx.de', $request->name);
                 $message->to('imymovielist@gmx.de', 'Admin')->subject('Imymovielist_contact_request');
             });
