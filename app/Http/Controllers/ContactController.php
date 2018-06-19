@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\ContactUs;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 /**
  * Class ContactController - Controller for contact requests.
