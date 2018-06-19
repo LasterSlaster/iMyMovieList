@@ -36,7 +36,7 @@ class ContactController extends Controller
                 'email' => $request->get('email'),
                 'user_message' => $request->get('message')
             ), function($message) use($request) {
-                $message->from($request->email, $request->name);
+                $message->from('imymovielist@gmx.de', $request->name);
                 $message->to('imymovielist@gmx.de', 'Admin')->subject('Imymovielist_contact_request');
             });
 
