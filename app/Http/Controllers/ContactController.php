@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ContactUs;
-use Illuminate\Http\Response;
+use Illuminate\Http\Request;
 
 /**
  * Class ContactController - Controller for contact requests.
