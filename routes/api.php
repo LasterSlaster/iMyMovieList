@@ -20,6 +20,7 @@ use Illuminate\Http\Request;
 Route::post('/user/signup', 'UserController@signup');
 Route::post('/user/signin', 'UserController@signin');
 Route::post('/passwords/reset/{token?}', 'UserController@forgotpw');
+Route::post('/contact', 'ContractController@sendEmail');
 
 Route::middleware('auth.jwt')->group(function() {
 
