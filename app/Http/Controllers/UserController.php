@@ -100,7 +100,7 @@ class UserController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logoutout(Request $request) {
+    public function logout(Request $request) {
         $this->validate($request, ['token' => 'required']);
 
         try {
