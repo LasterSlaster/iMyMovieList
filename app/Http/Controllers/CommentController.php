@@ -101,11 +101,8 @@ class CommentController extends Controller
         if ($authUser->nickname != $request->nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        $relatedMovie = Movie::where('movie_code', $request->movie_code)->first();
-        $relatedUser = User::where('nickname', $request->nickname)->first();
-
-        if (is_null($relatedMovie)|| is_null($relatedUser))
-            return Response::create('JSON body must contain a valid user and movie id', 422);
+        $relatedMovie = Movie::where('movie_code', $request->movie_code)->firstOrFail();
+        $relatedUser = User::where('nickname', $request->nickname)->firstOrFail();
 
         $comment = new Comment();
         $comment->user_id = $relatedUser->id;
