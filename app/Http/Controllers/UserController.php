@@ -134,7 +134,7 @@ class UserController extends Controller
         if (strcmp($request->password_new, $request->password_confirmation)) {
             return Response::create('Old and new password must be equal', 403);
         }
-        if (!(Hash::check($authUser->password, base64_decode($request->get('password_old'))))) {
+        if (!(Hash::check(base64_decode($request->get('password_old')), $authUser->password))) {
             return Response::create('Wrong password', 403);
         }
         $authUser->password = Hash::make(base64_decode($request->password_new));
