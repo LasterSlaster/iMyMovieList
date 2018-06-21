@@ -44,9 +44,10 @@ class SeenListController extends Controller
     public function store(Request $request, $nickname)
     {
         $this->validate($request, [
+            'nickname' => 'required',
             'movie_data' => 'required',
             'movie_code' => 'required',
-             'rating' => 'required'
+            'rating' => 'required|max:5|min:1'
         ]);
 
         $authUser = JWTAuth::parseToken()->toUser();
@@ -54,21 +55,24 @@ class SeenListController extends Controller
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        if ($request->rating < 1 || $request->rating > 5)
-            return Response::create('attribute rating must be a nuber between 1-5', 400);
-
         //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
-        $seenList = SeenList::where('user_id', $user->id)->firstOrFail();
+        $seenList = SeenList::where('user_id', $user->id)->first();
+        if (is_null($seenList))
+            return Response::create('no such list', 404);
 
-        if (is_null($movie = Movie::where('movie_code', $request->movie_code)->first())) {
+        $movie = Movie::where('movie_code', $request->movie_code)->first();
+
+        if (is_null($movie)) {
             $movie = new Movie();
             $movie->movie_code = $request->movie_code;
             $movie->movie_data = $request->movie_data;
             $movie->save();
         }
 
-        if (is_null($rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first())) {
+        $rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
+
+        if (is_null($rating)) {
             $rating = new UserMovieRating();
             $rating->user_id = $user->id;
             $rating->movie_id = $movie->id;
@@ -76,8 +80,8 @@ class SeenListController extends Controller
         $rating->rating = $request->rating;
         $rating->save();
 
-        //TODO: Make idempotent
-        if (!is_null($seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first()))
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
+        if (!is_null($seenListMovie))
             return Response::create('Resource is already present use PUT to update', 405)->header('Allow', 'PUT');
 
         $seenListMovie = new SeenListMovie();
@@ -87,8 +91,9 @@ class SeenListController extends Controller
 
         //Check if movie is already in watchlist and remove
         $watchList = watchList::where('user_id', $user->id)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
 
-        if (!is_null($watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first()))
+        if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
         return (new WatchListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
@@ -102,7 +107,10 @@ class SeenListController extends Controller
      */
     public function showList($nickname)
     {
-        if (is_null( $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList))
+        //Validation
+        $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
+
+        if (is_null($seenList))
             return Response::create('No such resource!',404);
 
         return new SeenListMovieCollection(SeenListMovie::where('seen_list_id',$seenList->id)->orderBy('created_at', 'desc')->paginate(20));
@@ -115,16 +123,17 @@ class SeenListController extends Controller
      * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
-    public function showMovie($nickname, $movie_code)
-    {
-        if (is_null($seenList = User::where('nickname', $nickname)->firstOrFail()->seenList))
+    public function showMovie($nickname, $movie_code) {
+        //Validation
+        $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
+
+        if (is_null($seenList))
             return Response::create('No such resource!',404);
 
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
 
         return new SeenListMovieResource(SeenListMovie::where('seen_list_id',$seenList->id)->where('movie_id', $movie->id)->firstOrFail());
     }
-
 
     /**
      * Remove the specified seenList resource from storage.
@@ -141,21 +150,13 @@ class SeenListController extends Controller
             return Response::create('Not authorized to access this resource', 403);
 
         $user = User::where('nickname', $nickname)->firstOrFail();
-
-        if (is_null($seenList = SeenList::where('user_id', $user->id)->first()))
-            return Response::create('no such list', 404);
-
-        if (is_null( $movie = Movie::where('movie_code', $movie_code)->first()))
-            return Response::create('No such movie', 404);
-
-        $rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
-
-        if (is_null($seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first()))
-            return Response::create('no such movie in watch list', 404);
+        $seenList = SeenList::where('user_id', $user->id)->firstOrFail();
+        $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->firstOrFail();
+        $rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->firstOrFail();
 
         $seenListMovie->delete();
         $rating->delete();
-
 
         return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(200);
     }

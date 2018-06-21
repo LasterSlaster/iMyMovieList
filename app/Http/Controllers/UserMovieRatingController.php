@@ -102,7 +102,9 @@ class UserMovieRatingController extends Controller
 
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
 
-        if (is_null( $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first())) {
+        $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
+
+        if (is_null($userMovieRating)) {
             $userMovieRating = new UserMovieRating();
         }
         $userMovieRating->user_id = $user->id;

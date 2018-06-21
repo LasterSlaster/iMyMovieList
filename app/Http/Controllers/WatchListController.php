@@ -42,11 +42,9 @@ class WatchListController extends Controller
      */
     public function store(Request $request, $nickname)
     {
-
         $this->validate($request, [
+            'movie_code' => 'required',
             'movie_data' => 'required',
-            'nickname' => 'required',
-            'movie_code' => 'required'
         ]);
 
         $authUser = JWTAuth::parseToken()->toUser();
@@ -54,18 +52,19 @@ class WatchListController extends Controller
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
         $watchList = WatchList::where('user_id', $user->id)->firstOrFail();
 
-        if (is_null($movie = Movie::where('movie_code', $request->movie_code)->first())) {
+        $movie = Movie::where('movie_code', $request->movie_code)->first();
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
+
+        if (is_null($movie)) {
             $movie = new Movie();
             $movie->movie_code = $request->movie_code;
             $movie->movie_data = $request->movie_data;
             $movie->save();
         }
 
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->firstOrFail();
         if (!is_null($watchListMovie))
             return Response::create('Resource is already present use PUT to update', 405)->header('Allow', 'PUT');
 
@@ -76,8 +75,9 @@ class WatchListController extends Controller
 
         //Check if movie is already in watchlist and remove
         $seenList = SeenList::where('user_id', $user->id)->first();
+        $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
 
-        if (!is_null($seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first()))
+        if (!is_null($seenListMovie))
             $seenListMovie->delete();
 
         return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
@@ -91,7 +91,10 @@ class WatchListController extends Controller
      */
     public function showList($nickname)
     {
-        if (is_null($watchList = User::where('nickname', $nickname)->firstOrFail()->watchList))
+        //Validation
+        $watchList = User::where('nickname', $nickname)->firstOrFail()->watchList;
+
+        if (is_null($watchList))
             return Response::create('No such resource!',404);
 
         return new WatchListMovieCollection(WatchListMovie::where('watch_list_id',$watchList->id)->orderBy('created_at', 'desc')->paginate(20));
@@ -106,13 +109,17 @@ class WatchListController extends Controller
      */
     public function showMovie($nickname, $movie_code)
     {
-        if (is_null($watchList = User::where('nickname', $nickname)->firstOrFail()->watchList))
+
+        $watchList = User::where('nickname', $nickname)->firstOrFail()->watchList;
+
+        if (is_null($watchList))
             return Response::create('No such resource!',404);
 
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
 
         return new WatchListMovieResource(WatchListMovie::where('watch_list_id',$watchList->id)->where('movie_id', $movie->id)->firstOrFail());
     }
+
 
     /**
      * Remove the specified watchList resource from storage.
@@ -132,6 +139,7 @@ class WatchListController extends Controller
         $user = User::where('nickname', $nickname)->firstOrFail();
         $watchList = WatchList::where('user_id', $user->id)->firstOrFail();
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
+
         $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->firstOrFail();
 
         $watchListMovie->delete();
