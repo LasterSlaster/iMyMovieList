@@ -6,12 +6,12 @@
 
 @section('content')
 
-<section class="topSection text-white text-center">
+<section class="topSection text-white text-center" itemprop="image">
         <div class="overlay"></div>
         <div class="container">
                 <div class="row">
                         <div class="col-xl-9 mx-auto">
-                                <h1 class="font-weight-bold mb-5">Behalte nun den Überblick über Deine Filme mit iMyMovieList!</h1>
+                                <h1 class="font-weight-bold mb-5" itemprop="name">Behalte nun den Überblick über Deine Filme mit iMyMovieList!</h1>
                         </div>
                         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
                                 <a href="https://imymovielist.firebaseapp.com/register" class="btn btn-success btn-block btn-lg">Jetzt Mitglied werden</a>
@@ -61,7 +61,7 @@
                         <div class="col-lg-6 order-lg-2 text-white feature-img" style="background-image: url('../img/welcome/organize.jpg');"></div>
                         <div class="col-lg-6 order-lg-1 my-auto feature-text">
                                 <h2 class="font-weight-bold">Organisiere Deine Filmelisten</h2>
-                                <p class="lead mb-0">Behalte Deine Filme stets im Überlick! Speicher Deine Filme in zwei separaten Listen: Die
+                                <p class="lead mb-0" itemprop="description">Behalte Deine Filme stets im Überlick! Speicher Deine Filme in zwei separaten Listen: Die
                                         "gesehen" und die "ansehen" Liste.</p>
                         </div>
                 </div>
