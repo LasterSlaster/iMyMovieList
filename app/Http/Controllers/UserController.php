@@ -37,7 +37,7 @@ class UserController extends Controller
         $this->validate($request, [
             'nickname' => 'required|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required>min:4'
+            'password' => 'required|min:4'
         ]);
 
         // Add original cased nickname
