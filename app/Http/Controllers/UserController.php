@@ -47,7 +47,7 @@ class UserController extends Controller
             'nickname' => $request->input('nickname'),
             'email' => $request->input('email'),
             // Decode the encoded password from the request and encrypt it again to store it
-            'password' => bcrypt(base64_decode($request->input('password')))
+            'password' => Hash::make(base64_decode($request->input('password')))
         ]);
         $user->save();
 
@@ -134,10 +134,10 @@ class UserController extends Controller
         if (strcmp($request->password_new, $request->password_confirmation)) {
             return Response::create('Old and new password must be equal', 403);
         }
-        if (!(Hash::check($request->get('password_old'), $authUser->password))) {
+        if (!(Hash::check($authUser->password, base64_decode($request->get('password_old'))))) {
             return Response::create('Wrong password', 403);
         }
-        $authUser->password = bcrypt(base64_decode($request->password_new));
+        $authUser->password = Hash::make(base64_decode($request->password_new));
         $authUser->save();
 
         return response()->json([
