@@ -24,10 +24,12 @@ Route::post('/contact', 'ContactController@sendEmail');
 
 Route::middleware('auth.jwt')->group(function() {
 
+    Route::post('/user/logout', 'UserController@logout');
+
     Route::get('/users', 'UserController@index');
     Route::get('/users/{nickname}', 'UserController@show');
     Route::patch('/users/{nickname}', 'UserController@update');
-    Route::post('/users/{nickname}/changepw', 'UserController@changepw');
+    Route::post('/users/{nickname}/password', 'UserController@changepw');
     Route::delete('/users/{nickname}', 'UserController@destroy');
 
     Route::get('/seenlists', 'SeenListController@index');
