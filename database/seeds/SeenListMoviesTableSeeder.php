@@ -12,7 +12,7 @@ class SeenListMoviesTableSeeder extends Seeder
      */
     public function run()
     {
-        $seenListId = DB::table('seen_lists')->pluck('id')->toArray();
+        $seenListId = DB::table('seen_lists')->pluck('id');
 
         $seenListId->each(function($u)  {
             $faker = new Faker();
