@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
+use Illuminate\Support\Facades\DB;
 
 $factory->define(App\UserMovieRating::class, function (Faker $faker) {
     $usersIDs = DB::table('users')->pluck('id')->toArray();

@@ -1,6 +1,7 @@
 <?php
 
 use Faker\Generator as Faker;
+use Illuminate\Support\Facades\DB;
 
 $factory->define(\App\WatchListMovie::class, function (Faker $faker) {
     $watchListId = DB::table('watch_lists')->pluck('id')->toArray();
