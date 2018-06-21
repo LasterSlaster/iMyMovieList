@@ -6,7 +6,6 @@ use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use Illuminate\Http\Request;
 use App\Movie;
-use Illuminate\Http\Response;
 use JWTAuth;
 
 /**
@@ -26,16 +25,6 @@ class MovieController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created movie resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -43,10 +32,10 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        //Validation
-        if (is_null($request->movie_code) || is_null($request->movie_data))
-            return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
-        //TODO: Validate movie_code and movie_data for semantics
+        $this->validate($request, [
+            'movie_code' => 'required',
+            'movie_data' => 'required'
+        ]);
 
         $movie = new Movie();
         $movie->movie_code = $request->movie_code;
@@ -67,16 +56,6 @@ class MovieController extends Controller
         return new MovieResource(Movie::where('movie_code', $movie_code)->firstOrFail());
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Movie $movie
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Movie $movie)
-    {
-        //
-    }
 
     /**
      * Update the specified movie resource in storage.
@@ -87,10 +66,10 @@ class MovieController extends Controller
      */
     public function update(Request $request, $movie_code)
     {
-        //Validation
-        if (is_null($request->movie_code)|| is_null($request->movie_data))
-            return Response::create('JSON body must contain attributes movie_code and movie_data', 422);
-        //TODO: Validate movie_code and movie_data for semantics
+        $this->validate($request, [
+            'movie_code' => 'required',
+            'movie_data' => 'required'
+        ]);
 
         $movie = Movie::where('movie_code', $movie_code)->first();
 
@@ -102,16 +81,5 @@ class MovieController extends Controller
         $movie->save();
 
         return (new MovieResource($movie))->response()->setStatusCode(201);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Movie $movie
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Movie $movie)
-    {
-        //
     }
 }

@@ -30,9 +30,6 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function signup(Request $request) {
-        $nicknameTemp = $request->input('nickname');
-        // Convert nickname to lower case to reject differently cased names
-        $request->merge(['nickname' => strtolower($request->input('nickname'))]);
 
         $this->validate($request, [
             'nickname' => 'required|unique:users',
@@ -40,13 +37,16 @@ class UserController extends Controller
             'password' => 'required|min:4'
         ]);
 
+        // Convert nickname to lower case to reject differently cased names
+        $nicknameTemp = $request->input('nickname');
+        $request->merge(['nickname' => strtolower($request->input('nickname'))]);
+
         // Add original cased nickname
         $request->merge(['nickname' => $nicknameTemp]);
 
         $user = new User([
             'nickname' => $request->input('nickname'),
             'email' => $request->input('email'),
-            // Decode the encoded password from the request and encrypt it again to store it
             'password' => Hash::make(base64_decode($request->input('password')))
         ]);
         $user->save();
@@ -71,12 +71,14 @@ class UserController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function signin(Request $request) {
+
         $this->validate($request, [
             'email' => 'required|email',
             'password' => 'required|min:4'
         ]);
-        // decode password
+
         $credentials = ['email' => strtolower($request->input('email')), 'password' => base64_decode($request->input('password'))];
+
         try {
             if(!$token = JWTAuth::attempt($credentials)) {
                 return response()->json([
@@ -107,7 +109,6 @@ class UserController extends Controller
             JWTAuth::invalidate($request->input('token'));
             return response()->json(['success' => true, 'message'=> "You have successfully logged out."]);
         } catch (JWTException $e) {
-            // something went wrong whilst attempting to encode the token
             return response()->json(['success' => false, 'error' => 'Failed to logout, please try again.'], 500);
         }
     }
@@ -154,31 +155,12 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if ($request->search != null) {
+            //Return users match the search string
             return new UserCollection(User::where('nickname', 'like', '%'.$request->search.'%')->orderBy('nickname', 'desc')->paginate(20));
         } else {
+            //Return all users in db
             return new UserCollection(User::paginate(20));
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
     }
 
     /**
@@ -190,17 +172,6 @@ class UserController extends Controller
     public function show($nickname)
     {
         return new UserResource(User::where('nickname', $nickname)->firstOrFail());
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  User $user
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(User $user)
-    {
-        //
     }
 
     /**
@@ -238,8 +209,6 @@ class UserController extends Controller
         $user = User::where('nickname', $nickname)->firstOrFail();
         $authUser = JWTAuth::parseToken()->toUser();
 
-        //TODO: Also check for a solution to define a cascade deletion in the migration class or delete methods on model
-        //Instead of deleting the user and all dependent entries try laravel soft delition
         if ($authUser->nickname != $nickname && $authUser->role == 'admin') {
             $user->seenList()->delete();
             $user->watchList()->delete();

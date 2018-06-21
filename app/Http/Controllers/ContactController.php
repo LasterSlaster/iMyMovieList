@@ -30,6 +30,7 @@ class ContactController extends Controller
 
         ContactUs::created($request->all());
 
+        //Send email to IMyMovieList Team
         Mail::send('emails.contact_message',
             array(
                 'name' => $request->get('name'),
@@ -40,6 +41,7 @@ class ContactController extends Controller
                 $message->to('imymovielist@gmx.de', 'Admin')->subject('Imymovielist_contact_request');
             });
 
+        //Respond to user request
         Mail::send('emails.contact_message_response',
             array(
                 'name' => $request->get('name'),

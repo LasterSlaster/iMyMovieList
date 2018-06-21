@@ -26,8 +26,8 @@ class CommentController extends Controller
     public function index()
     {
         $comments = Comment::paginate(20);
-        //TODO: Check if null value is possible for paginate
-        if (is_null($comments))
+
+        if ($comments->isEmpty())
             return Response::create('No comments available', 404);
 
         return new CommentCollection($comments);
@@ -45,12 +45,12 @@ class CommentController extends Controller
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
         $comments = Comment::where('movie_id', $movie->id)->paginate(20);
 
-        if (is_null($comments))
+        if ($comments->isEmpty())
             return Response::create('No comments to movie: ' . $movie_code . ' available', 404);
 
         //find current user comment
-        $userComment = Comment::where('user_id', JWTAuth::parseToken()->toUser()->id)->where('movie_id', $movie->id)->first();
-        //TODO: Check behavior on not existing comment!!!
+        $userComment = Comment::where('user_id', JWTAuth::parseToken()->toUser()->id)->where('movie_id', $movie->id)->firstOrFail();
+
         // Create collections first then paginate
         return (new CommentCollection($comments))
             ->additional([
@@ -75,21 +75,10 @@ class CommentController extends Controller
         $user = User::where('nickname', $nickname)->firstOrFail();
         $comments = Comment::where('user_id', $user->id)->paginate(20);
 
-        if (is_null($comments))
+        if ($comments->isEmpty())
             return Response::create('No comments to movie: ' . $nickname . ' available', 404);
 
         return new CommentCollection($comments);
-    }
-
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
 
@@ -102,8 +91,10 @@ class CommentController extends Controller
     public function store(Request $request)
     {
         //Validation
-        if (is_null($request->movie_code) || is_null($request->nickname))
-            return Response::create('JSON must contain a movie_code and a nickname', 422);
+        $this->validate($request, [
+            'movie_code' => 'required',
+            'nickname' => 'required'
+        ]);
 
         $authUser = JWTAuth::parseToken()->toUser();
 
@@ -136,20 +127,8 @@ class CommentController extends Controller
         return new CommentResource($comment);
     }
 
-
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Comment $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Comment $comment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified rcomment esource in storage.
+     * Update the specified comment resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  string $nickname
@@ -181,16 +160,5 @@ class CommentController extends Controller
         $comment->save();
 
         return (new CommentResource($comment))->response()->setStatusCode(201);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Comment $comment
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Comment $comment)
-    {
-        //
     }
 }

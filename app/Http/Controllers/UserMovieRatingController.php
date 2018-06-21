@@ -27,16 +27,6 @@ class UserMovieRatingController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created userMovieRating resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -44,17 +34,16 @@ class UserMovieRatingController extends Controller
      */
     public function store(Request $request)
     {
-        //Validation
-        $user = User::where('nickname', $request->nickname)->firstOrFail();
-        if (is_null($request->movie_id) || is_null($request->nickname))
-            return Response::create('JSON body must contain attributes movie_id, nickname and rating', 422);
 
-        $movie = Movie::where('movie_code', $request->movie_code)->first();
-        if (is_null($movie))
-            return Response::create('Movie id is not valid', 422);
+        $this->validate($request, [
+            'movie_code' => 'required',
+            'nickname' => 'required',
+            'rating' => 'required|number|min:1|max:5'
+        ]);
 
-        //TODO: Validate that rating is an interger within the range
         $authUser = JWTAuth::parseToken()->toUser();
+        $user = User::where('nickname', $request->nickname)->firstOrFail();
+        $movie = Movie::where('movie_code', $request->movie_code)->firstOrFail();
 
         if ($authUser->nickname != $request->nickname)
             return Response::create('Not authorized to access this resource', 403);
@@ -64,7 +53,7 @@ class UserMovieRatingController extends Controller
         $userMovieRating->movie_id = $movie->id;
         $userMovieRating->rating = $request->rating;
         $userMovieRating->save();
-        //TODO: Return the new Resource URL
+
         return (new UserMovieRatingResource($userMovieRating))->response()->setStatusCode(201)->header('location', url()->full()."/".$userMovieRating->id);
     }
 
@@ -79,23 +68,9 @@ class UserMovieRatingController extends Controller
     {
         $user = User::where('nickname', $nickname)->firstOrFail();
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
-        $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
-
-        if (is_null($userMovieRating))
-            return Response::create('Specified resource not found', 404);
+        $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->firstOrFail();
 
         return new UserMovieRatingResource($userMovieRating);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\UserMovieRating  $userMovieRating
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(UserMovieRating $userMovieRating)
-    {
-        //
     }
 
     /**
@@ -109,22 +84,25 @@ class UserMovieRatingController extends Controller
     public function update(Request $request, $nickname, $movie_code)
     {
         //Validation
+        $this->validate($request, [
+            'movie_code' => 'required',
+            'nickname' => 'required',
+            'rating' => 'required|number|min:1|max:5'
+        ]);
+
         $authUser = JWTAuth::parseToken()->toUser();
+
+        $user = User::where('nickname', $nickname)->firstOrFail();
 
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
-        $user = User::where('nickname', $nickname)->firstOrFail();
+
         if ($request->nickname != $nickname && $request->movie_code != $movie_code)
             return Response::create('URL parameter movie_id and nickname must be equal to json body attributes', 422);
 
-        if (is_null($request->rating))
-            return Response::create('JSON attribute rating must not be null', 422);
-
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
-        //TODO: Validate that rating is an interger within the range
-        $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
 
-        if (is_null($userMovieRating)) {
+        if (is_null( $userMovieRating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first())) {
             $userMovieRating = new UserMovieRating();
         }
         $userMovieRating->user_id = $user->id;
@@ -133,16 +111,5 @@ class UserMovieRatingController extends Controller
         $userMovieRating->save();
 
         return (new UserMovieRatingResource($userMovieRating))->response()->setStatusCode(201);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\UserMovieRating  $userMovieRating
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(UserMovieRating $userMovieRating)
-    {
-        //
     }
 }
