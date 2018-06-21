@@ -36,7 +36,7 @@ class UserController extends Controller
         $this->validate($request, [
             'nickname' => 'required|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required'
+            'password' => 'required>min:4'
         ]);
 
         // Add original cased nickname
@@ -72,7 +72,7 @@ class UserController extends Controller
     public function signin(Request $request) {
         $this->validate($request, [
             'email' => 'required|email',
-            'password' => 'required'
+            'password' => 'required|min:4'
         ]);
         // decode password
         $credentials = ['email' => strtolower($request->input('email')), 'password' => base64_decode($request->input('password'))];
@@ -94,13 +94,21 @@ class UserController extends Controller
     }
 
     /**
-     * Reset current password.
+     * Logout an existing user
      *
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function forgotpw()
-    {
+    public function logoutout(Request $request) {
+        $this->validate($request, ['token' => 'required']);
 
+        try {
+            JWTAuth::invalidate($request->input('token'));
+            return response()->json(['success' => true, 'message'=> "You have successfully logged out."]);
+        } catch (JWTException $e) {
+            // something went wrong whilst attempting to encode the token
+            return response()->json(['success' => false, 'error' => 'Failed to logout, please try again.'], 500);
+        }
     }
 
     /**
@@ -112,17 +120,22 @@ class UserController extends Controller
      */
     public function changepw(Request $request, $nickname)
     {
+        $this->validate($request, [
+            'password_confirmation' => 'required|min:4',
+            'password_old' => 'required|min:4',
+            'password_new' => 'required|min:4'
+            ], ['Request must contain a nickname, password and password_confirmation']);
+
         $authUser = JWTAuth::parseToken()->toUser();
         if ($authUser->nickname != $nickname) {
             return Response::create('Not authorized to access this resource', 403);
         }
-        if ($request->password_old == '' || $request->password_new == ''|| $request->password_confirmation == '') {
-            return Response::create('Request must contain a nickname, password and password_confirmation');
-        }
         if (strcmp($request->password_new, $request->password_confirmation)) {
             return Response::create('Old and new password must be equal', 400);
         }
-
+        if (!(Hash::check($request->get('password_old'), $authUser->password))) {
+            return Response::create('Wrong password', 401);
+        }
         $authUser->password = bcrypt(base64_decode($request->password_new));
         $authUser->save();
 
