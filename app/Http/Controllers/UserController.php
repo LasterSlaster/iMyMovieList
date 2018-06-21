@@ -13,6 +13,7 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use JWTAuth;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Auth\Passwords\CanResetPassword;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class UserController - Controller for requests to user resources
