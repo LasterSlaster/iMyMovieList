@@ -132,10 +132,10 @@ class UserController extends Controller
             return Response::create('Not authorized to access this resource', 403);
         }
         if (strcmp($request->password_new, $request->password_confirmation)) {
-            return Response::create('Old and new password must be equal', 400);
+            return Response::create('Old and new password must be equal', 403);
         }
         if (!(Hash::check($request->get('password_old'), $authUser->password))) {
-            return Response::create('Wrong password', 401);
+            return Response::create('Wrong password', 403);
         }
         $authUser->password = bcrypt(base64_decode($request->password_new));
         $authUser->save();
