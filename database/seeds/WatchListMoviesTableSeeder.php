@@ -13,7 +13,7 @@ class WatchListMoviesTableSeeder extends Seeder
      */
     public function run()
     {
-        $watchListId = DB::table('watch_lists')->pluck('id')->toArray();
+        $watchListId = DB::table('watch_lists')->pluck('id');
 
         $watchListId->each(function($u)  {
             $faker = new Faker();
