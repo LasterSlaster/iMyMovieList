@@ -244,7 +244,7 @@ class UserController extends Controller
             $user->seenList()->delete();
             $user->watchList()->delete();
             $user->userMovieRatings()->delete();
-            $user->comments()->dfelete();
+            $user->comments()->delete();
             $user->delete();
             return new UserCollection(User::paginate(20));
         }
