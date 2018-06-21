@@ -4,21 +4,27 @@ namespace App\Http\Controllers;
 
 use App\SeenListMovie;
 use App\SeenList;
+use App\UserMovieRating;
 use App\WatchListMovie;
 use App\WatchList;
 use App\Movie;
 use App\User;
 use App\Http\Resources\SeenListCollection;
+use App\Http\Resources\WatchListMovieCollection;
 use App\Http\Resources\SeenListMovieCollection;
 use App\Http\Resources\SeenListMovieResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JWTAuth;
 
+/**
+ * Class SeenListController - Controller for requests to seenList resources
+ * @package App\Http\Controllers
+ */
 class SeenListController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Return a listing of the seenList resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -38,9 +44,11 @@ class SeenListController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created seenList resource in storage.
+     * Or update a seenList resource if the resource already exists.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $nickname)
@@ -62,6 +70,10 @@ class SeenListController extends Controller
 
         if ($request->movie_code == '')
             return Response::create('attribute movie_code is missing or empty', 422);
+        if ($request->rating == '')
+            return Response::create('attribute rating is missing or empty', 422);
+        if ($request->rating < 1 || $request->rating > 5)
+            return Response::create('attribute rating must be a nuber between 1-5', 400);
 
         //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
@@ -75,6 +87,17 @@ class SeenListController extends Controller
             $movie->movie_data = $request->movie_data;
             $movie->save();
         }
+
+        if (is_null($rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first())) {
+            $rating = new UserMovieRating();
+            $rating->user_id = $user->id;
+            $rating->movie_id = $movie->id;
+        }
+        $rating->rating = $request->rating;
+        $rating->save();
+
+
+
 
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
         if (!is_null($seenListMovie))
@@ -92,13 +115,13 @@ class SeenListController extends Controller
         if (!is_null($watchListMovie))
             $watchListMovie->delete();
 
-        return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
+        return (new WatchListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);;
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified seenList resource for a certain user.
      *
-     * @param  int $user_id
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function showList($nickname)
@@ -112,6 +135,13 @@ class SeenListController extends Controller
         return new SeenListMovieCollection(SeenListMovie::where('seen_list_id',$seenList->id)->orderBy('created_at', 'desc')->paginate(20));
     }
 
+    /**
+     * Return the specified seenList resource for a certain movie.
+     *
+     * @param  string $nickname
+     * @param  string $movie_code
+     * @return \Illuminate\Http\Response
+     */
     public function showMovie($nickname, $movie_code) {
         //Validation
         $seenList = User::where('nickname', $nickname)->firstOrFail()->seenList;
@@ -136,15 +166,16 @@ class SeenListController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified seenList resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $user_id
-     * @param int $movie_id
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $user_id, $movie_code)
     {
+        /*
         //TODO: Think about removing this method
         //TODO: Rewrite this method!!!
 
@@ -194,13 +225,14 @@ class SeenListController extends Controller
             $watchListMovie->delete();
 
         return new SeenListMovieResource($seenListMovie);
+        */
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified seenList resource from storage.
      *
-     * @param int $user_id
-     * @param int $movie_id
+     * @param string $nickname
+     * @param string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function destroy($nickname, $movie_code)
@@ -221,11 +253,14 @@ class SeenListController extends Controller
             return Response::create('No such movie', 404);
         //TODO: Merge Transactions
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
+        $rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
 
         if (is_null($seenListMovie))
             return Response::create('no such movie in watch list', 404);
 
         $seenListMovie->delete();
+        $rating->delete();
+
 
         return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(200);
     }

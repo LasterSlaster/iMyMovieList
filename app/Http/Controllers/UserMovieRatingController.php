@@ -7,11 +7,17 @@ use App\Http\Resources\UserMovieRatingResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use JWTAuth;
+use App\User;
+use App\Movie;
 
+/**
+ * Class UserMovieRatingController - Controller for requests to userMovieRating resources
+ * @package App\Http\Controllers
+ */
 class UserMovieRatingController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Return a listing of the userMovieRating resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -31,7 +37,7 @@ class UserMovieRatingController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created userMovieRating resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -63,10 +69,10 @@ class UserMovieRatingController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified userMovieRating resource.
      *
-     * @param  int $user_id
-     * @param int $movie_id
+     * @param  string $nickname
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function show($nickname, $movie_code)
@@ -93,11 +99,11 @@ class UserMovieRatingController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified userMovieRating resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int $user_id
-     * @param int $movie_id
+     * @param  string $nickname
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $nickname, $movie_code)
@@ -105,7 +111,7 @@ class UserMovieRatingController extends Controller
         //Validation
         $authUser = JWTAuth::parseToken()->toUser();
 
-        if ($authUser->id != $nickname)
+        if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
         $user = User::where('nickname', $nickname)->firstOrFail();
         if ($request->nickname != $nickname && $request->movie_code != $movie_code)

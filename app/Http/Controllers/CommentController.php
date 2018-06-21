@@ -12,14 +12,14 @@ use Illuminate\Http\Response;
 use JWTAuth;
 
 /**
- * Class CommentController
+ * Class CommentController - Controller for requests to comment resources
  * @package App\Http\Controllers
  */
 class CommentController extends Controller
 {
 
     /**
-     * Display a listing of the resource.
+     * Return a paginated listing of the comment resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -35,9 +35,9 @@ class CommentController extends Controller
 
 
     /**
-     * Display the specified resource.
+     * Return a paginated listing of the comment resource for a certain movie.
      *
-     * @param  Comment $comment
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function indexMovieComments($movie_code)
@@ -59,9 +59,9 @@ class CommentController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Return a paginated listing of the comment resource for a certain user.
      *
-     * @param  Comment $comment
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function indexUserComments($nickname)
@@ -94,7 +94,7 @@ class CommentController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created comment resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -126,7 +126,7 @@ class CommentController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified comment resource.
      *
      * @param  Comment $comment
      * @return \Illuminate\Http\Response
@@ -149,10 +149,12 @@ class CommentController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified rcomment esource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  Comment $comment
+     * @param  string $nickname
+     * @param  string $movie_code
+     * @param  int $comment_id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $nickname, $movie_code, $comment_id)

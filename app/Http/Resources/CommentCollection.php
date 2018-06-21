@@ -6,6 +6,10 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use JWTAuth;
 use App\Comment;
 
+/**
+ * Class CommentCollection for Collection to JSON conversion
+ * @package App\Http\Resources
+ */
 class CommentCollection extends ResourceCollection
 {
     /**

@@ -11,18 +11,19 @@ use App\WatchList;
 use App\SeenList;
 use App\WatchListMovie;
 use App\SeenListMovie;
+use App\Http\Resources\SeenListMovieCollection;
 use App\Movie;
 use App\User;
 use JWTAuth;
 
 /**
- * Class WatchListController
+ * Class WatchListController - Controller for requests to watchList resources
  * @package App\Http\Controllers
  */
 class WatchListController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Return a listing of the watchList resource.
      *
      * @return \Illuminate\Http\Response
      */
@@ -42,9 +43,11 @@ class WatchListController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created watchList resource in storage.
+     * Or update the resource if it already exists.
      *
      * @param  \Illuminate\Http\Request  $request
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $nickname)
@@ -95,13 +98,13 @@ class WatchListController extends Controller
         if (!is_null($seenListMovie))
             $seenListMovie->delete();
 
-        return (new WatchListMovieCollection(WatchListMovie::where('watch_list_id', $watchList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
+        return (new SeenListMovieCollection(SeenListMovie::where('seen_list_id', $seenList->id)->orderBy('created_at', 'desc')->paginate(20)))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
     }
 
     /**
-     * Display the specified resource.
+     * Return the specified watchList resource for a certain user.
      *
-     * @param  int $user_id
+     * @param  string $nickname
      * @return \Illuminate\Http\Response
      */
     public function showList($nickname)
@@ -115,6 +118,13 @@ class WatchListController extends Controller
         return new WatchListMovieCollection(WatchListMovie::where('watch_list_id',$watchList->id)->orderBy('created_at', 'desc')->paginate(20));
     }
 
+    /**
+     * Return the specified watchList resource for a certain movie.
+     *
+     * @param  string $nickname
+     * @param  string $movie_code
+     * @return \Illuminate\Http\Response
+     */
     public function showMovie($nickname, $movie_code)
     {
 
@@ -140,15 +150,16 @@ class WatchListController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified watchList resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int $user_id
-     * @param int $movie_id
+     * @param  string $movie_code
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $user_id, $movie_code)
     {
+        /*
         //TODO: Think about removing this method and use a idempotent post method
         //TODO: Rewrite this method
 
@@ -199,13 +210,14 @@ class WatchListController extends Controller
             $seenListMovie->delete();
 
         return (new WatchListMovieResource($watchListMovie))->response()->setStatusCode(201)->header('location', url()->full()."/".$movie->movie_code);
+        */
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified watchList resource from storage.
      *
-     * @param  int $user_id
-     * @param int $movie_id
+     * @param  string %nickname
+     * @param  string %movie_code
      * @return \Illuminate\Http\Response
      */
     public function destroy($nickname, $movie_code)

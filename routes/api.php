@@ -19,6 +19,8 @@ use Illuminate\Http\Request;
 
 Route::post('/user/signup', 'UserController@signup');
 Route::post('/user/signin', 'UserController@signin');
+Route::post('/passwords/reset/{token?}', 'UserController@forgotpw');
+Route::post('/contact', 'ContactController@sendEmail');
 
 //TODO: IMplement Password reset routes
 //Route::post('/user/forgotpw', 'UserController@forgotpw');
@@ -28,9 +30,12 @@ Route::post('/user/signin', 'UserController@signin');
 
     //Route::post('/user/resetpw', 'UserController@resetpw');
 
+    Route::post('/user/logout', 'UserController@logout');
+
     Route::get('/users', 'UserController@index');
     Route::get('/users/{nickname}', 'UserController@show');
     Route::patch('/users/{nickname}', 'UserController@update');
+    Route::post('/users/{nickname}/password', 'UserController@changepw');
     Route::delete('/users/{nickname}', 'UserController@destroy');
 
     Route::get('/seenlists', 'SeenListController@index');

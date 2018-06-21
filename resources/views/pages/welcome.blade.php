@@ -1,6 +1,6 @@
 @extends('master') @section('stylesheets')
 
-<link rel="stylesheet" type="text/css" href="{{ asset('css/welcome.css') }}"> 
+<link rel="stylesheet" type="text/css" href="/css/welcome.css">
 
 @endsection 
 
@@ -14,7 +14,7 @@
                                 <h1 class="font-weight-bold mb-5">Behalte nun den Überblick über Deine Filme mit iMyMovieList!</h1>
                         </div>
                         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                                <button class="btn btn-success btn-block btn-lg">Jetzt Mitglied werden</button>
+                                <a href="https://imymovielist.firebaseapp.com/register" class="btn btn-success btn-block btn-lg">Jetzt Mitglied werden</a>
                         </div>
                 </div>
         </div>
@@ -91,7 +91,7 @@
                                 <h2 class="font-weight-bold mb-4">Überzeugt? Dann geht's hier weiter:</h2>
                         </div>
                         <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                                <button class="btn btn-primary btn-block btn-lg">Registrieren</button>
+                                <a href="https://imymovielist.firebaseapp.com/register"  class="btn btn-primary btn-block btn-lg">Registrieren</a>
                         </div>
                 </div>
         </div>

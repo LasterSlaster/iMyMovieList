@@ -21,6 +21,11 @@
             <li class="list-inline-item">
               <a target="_blank" href="https://developers.themoviedb.org/3/getting-started">TMDB API</a>
             </li>
+            <li class="list-inline-item">
+              <a target="_blank" href="https://facebook.com">Facebook</a>
+            <li class="list-inline-item">
+              <a target="_blank" href="https://twitter.com">Twitter</a>
+            </li>
           </ul>
         </div>
       </div>
