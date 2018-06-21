@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ app()->getLocale() }}">
-
+<html lang="{{ app()->getLocale() }}" itemscope itemtype="http://schema.org/WebPage">
 @include('partials._head')
 
 <body>
