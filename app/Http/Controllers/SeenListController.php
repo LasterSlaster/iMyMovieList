@@ -44,10 +44,9 @@ class SeenListController extends Controller
     public function store(Request $request, $nickname)
     {
         $this->validate($request, [
-            'nickname' => 'required',
             'movie_data' => 'required',
             'movie_code' => 'required',
-            'rating' => 'required|max:5|min:1'
+            'rating' => 'required|integer|max:5|min:1'
         ]);
 
         $authUser = JWTAuth::parseToken()->toUser();
@@ -57,9 +56,7 @@ class SeenListController extends Controller
 
         //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
-        $seenList = SeenList::where('user_id', $user->id)->first();
-        if (is_null($seenList))
-            return Response::create('no such list', 404);
+        $seenList = SeenList::where('user_id', $user->id)->firstOrFail();
 
         $movie = Movie::where('movie_code', $request->movie_code)->first();
 
