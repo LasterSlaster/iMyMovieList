@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use App\WatchList;
 use App\SeenList;
 
-class UsersTableSeeder extends Seeder
+class UsersTableExampleSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -13,10 +13,32 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\User::class, 50)->create()
-            ->each(function($u) {
-                $u->watchList()->save(new WatchList(['user_id' => $u->id]));
-                $u->seenList()->save(new SeenList(['user_id' => $u->id]));
-            });
+        $exampleAdmin = new \App\User();
+        $exampleAdmin->nickname = 'exampleAdmin';
+        $exampleAdmin->email = 'exampleAdmin@email.de';
+        $exampleAdmin->password = bcrypt('admin');
+        $exampleAdmin->remember_token = str_random(10);
+        $exampleAdmin->role = 'admin';
+        $exampleAdmin->save();
+
+        $watchlist = new WatchList(['user_id' => $exampleAdmin->id]);
+        $watchlist->save();
+        $seenlist = new SeenList(['user_id' => $exampleAdmin->id]);
+
+        $seenlist->save();
+
+        $exampleUser = new \App\User();
+        $exampleUser->nickname = 'exampleUser';
+        $exampleUser->email = 'exampleUser@email.de';
+        $exampleUser->password = bcrypt('user');
+        $exampleUser->remember_token = str_random(10);
+        $exampleUser->role = 'user';
+        $exampleUser->save();
+
+        $watchlist = new WatchList(['user_id' => $exampleUser->id]);
+        $watchlist->save();
+        $seenlist = new SeenList(['user_id' => $exampleUser->id]);
+
+        $seenlist->save();
     }
 }

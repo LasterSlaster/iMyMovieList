@@ -13,10 +13,6 @@ use Illuminate\Http\Request;
 |
 */
 
-/*Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});*/
-
 Route::post('/user/signup', 'UserController@signup');
 Route::post('/user/signin', 'UserController@signin');
 Route::post('/contact', 'ContactController@sendEmail');
@@ -60,12 +56,3 @@ Route::middleware('auth.jwt')->group(function() {
     Route::post('/movies', 'MovieController@store');
     Route::put('/movies/{movie_code}', 'MovieController@update');
 });
-
-/*Route::apiResource([
-    'comments' => 'CommentController',
-    'movies' => 'MovieController',
-    'users' => 'UserController',
-    'seenlist' => 'SeenListController',
-    'watchlist' => 'WatchListController',
-    'usermovierating' => 'UserMovieRatingController'
-]);*/

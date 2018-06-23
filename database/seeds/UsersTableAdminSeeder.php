@@ -27,7 +27,6 @@ class UsersTableAdminSeeder extends Seeder
         $watchlist = new WatchList(['user_id' => $adminDima->id]);
         $watchlist->save();
         $seenlist = new SeenList(['user_id' => $adminDima->id]);
-
         $seenlist->save();
 
         $adminMarius = new \App\User();
