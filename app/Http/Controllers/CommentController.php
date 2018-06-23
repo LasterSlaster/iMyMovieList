@@ -92,8 +92,8 @@ class CommentController extends Controller
     {
         //Validation
         $this->validate($request, [
-            'movie_code' => 'required',
-            'nickname' => 'required'
+            'movie_code' => 'required|integer',
+            'nickname' => 'required|string'
         ]);
 
         $authUser = JWTAuth::parseToken()->toUser();
@@ -136,14 +136,12 @@ class CommentController extends Controller
     public function update(Request $request, $nickname, $movie_code, $comment_id)
     {
         //Validation
+        $this->validate($request, [
+            'movie_code' => 'required|integer',
+            'nickname' => 'required|string'
+        ]);
         if ($request->nickname != $nickname || $request->movie_code != $movie_code)
             return Response::create('URL parameters must match request body attributes', 422);
-
-        $comment = Comment::find($comment_id);
-
-        if (is_null($comment)) {
-            $comment = new Comment();
-        }
 
         $user = User::where('nickname', $nickname)->first();
         if (is_null($user))
@@ -151,6 +149,10 @@ class CommentController extends Controller
 
         $movie = Movie::where('movie_code', $movie_code)->firstOrFail();
 
+        $comment = Comment::find($comment_id);
+        if (is_null($comment)) {
+            $comment = new Comment();
+        }
         $comment->user_id = $user->id;
         $comment->movie_id = $movie->id;
         $comment->comment_text = $request->comment_text;

@@ -23,7 +23,7 @@ class ContactController extends Controller
     public function sendEmail(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required',
+            'name' => 'required|string',
             'email' => 'required|email',
             'message' => 'required|max:1500'
         ]);

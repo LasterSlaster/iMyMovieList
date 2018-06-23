@@ -183,14 +183,15 @@ class UserController extends Controller
      */
     public function update(Request $request, $nickname)
     {
+        $this->validate($request, [
+            'role' => 'required|in:admin,user'
+        ], ['Role must be either admin or user!']);
+
         $authUser = JWTAuth::parseToken()->toUser();
         if ($authUser->role != 'admin') {
             return Response::create('Not authorized to access this resource', 403);
         }
         $user = User::where('nickname', $nickname)->firstOrFail();
-        //Validation
-        if (is_null($request->role) && ($request->role != 'admin' || $request->role != 'user'))
-            return Response::create('JSON body must contain attribute role. Possible values: admin|user', 422);
 
         $user->role = $request->role;
         $user->save();

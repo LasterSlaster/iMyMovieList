@@ -33,8 +33,8 @@ class MovieController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'movie_code' => 'required',
-            'movie_data' => 'required'
+            'movie_code' => 'required|integer',
+            'movie_data' => 'required|string'
         ]);
 
         $movie = new Movie();
@@ -67,8 +67,8 @@ class MovieController extends Controller
     public function update(Request $request, $movie_code)
     {
         $this->validate($request, [
-            'movie_code' => 'required',
-            'movie_data' => 'required'
+            'movie_code' => 'required|integer',
+            'movie_data' => 'required|string'
         ]);
 
         $movie = Movie::where('movie_code', $movie_code)->first();

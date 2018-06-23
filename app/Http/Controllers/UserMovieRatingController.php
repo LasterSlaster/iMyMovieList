@@ -85,9 +85,9 @@ class UserMovieRatingController extends Controller
     {
         //Validation
         $this->validate($request, [
-            'movie_code' => 'required',
-            'nickname' => 'required',
-            'rating' => 'required|number|min:1|max:5'
+            'movie_code' => 'required|interger',
+            'nickname' => 'required|string',
+            'rating' => 'required|interger|min:1|max:5'
         ]);
 
         $authUser = JWTAuth::parseToken()->toUser();
