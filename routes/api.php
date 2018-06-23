@@ -19,17 +19,11 @@ use Illuminate\Http\Request;
 
 Route::post('/user/signup', 'UserController@signup');
 Route::post('/user/signin', 'UserController@signin');
-Route::post('/passwords/reset/{token?}', 'UserController@forgotpw');
 Route::post('/contact', 'ContactController@sendEmail');
 
-//TODO: IMplement Password reset routes
-//Route::post('/user/forgotpw', 'UserController@forgotpw');
-//Route::post('/contact', 'ContactController@send');
+Route::middleware('auth.jwt')->group(function() {
 
-//Route::middleware('auth.jwt')->group(function() {
-
-    //Route::post('/user/resetpw', 'UserController@resetpw');
-
+    Route::post('/user/password', 'UserController@changepw');
     Route::post('/user/logout', 'UserController@logout');
 
     Route::get('/users', 'UserController@index');
@@ -42,14 +36,12 @@ Route::post('/contact', 'ContactController@sendEmail');
     Route::get('/users/{nickname}/seenlist/', 'SeenListController@showList');
     Route::get('/users/{nickname}/seenlist/movies/{movie_code}', 'SeenListController@showMovie');
     Route::post('/users/{nickname}/seenlist/movies/', 'SeenListController@store');
-    //Route::put('/users/{user_id}/seenlist/movies/{movie_id}', 'SeenListController@update');
     Route::delete('/users/{nickname}/seenlist/movies/{movie_code}', 'SeenListController@destroy');
 
     Route::get('/watchlists', 'WatchListController@index');
     Route::get('/users/{nickname}/watchlist/', 'WatchListController@showList');
     Route::get('/users/{nickname}/watchlist/movies/{movie_code}', 'WatchListController@showMovie');
     Route::post('/users/{nickname}/watchlist/movies/', 'WatchListController@store');
-    //Route::put('/users/{user_id}/watchlist/movies/{movie_id}', 'WatchListController@update');
     Route::delete('/users/{nickname}/watchlist/movies/{movie_code}', 'WatchListController@destroy');
 
     Route::get('/users/{nickname}/usermovieratings/movies/{movie_code}', 'UserMovieRatingController@show');
@@ -67,7 +59,7 @@ Route::post('/contact', 'ContactController@sendEmail');
     Route::get('/movies/{movie_code}', 'MovieController@show');
     Route::post('/movies', 'MovieController@store');
     Route::put('/movies/{movie_code}', 'MovieController@update');
-//});
+});
 
 /*Route::apiResource([
     'comments' => 'CommentController',
