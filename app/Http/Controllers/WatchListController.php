@@ -44,7 +44,7 @@ class WatchListController extends Controller
     {
         $this->validate($request, [
             'movie_code' => 'required|integer',
-            'movie_data' => 'required|string',
+            'movie_data' => 'required',
         ]);
 
         $authUser = JWTAuth::parseToken()->toUser();

@@ -34,7 +34,7 @@ class MovieController extends Controller
     {
         $this->validate($request, [
             'movie_code' => 'required|integer',
-            'movie_data' => 'required|string'
+            'movie_data' => 'required'
         ]);
 
         $movie = new Movie();
@@ -68,7 +68,7 @@ class MovieController extends Controller
     {
         $this->validate($request, [
             'movie_code' => 'required|integer',
-            'movie_data' => 'required|string'
+            'movie_data' => 'required'
         ]);
 
         $movie = Movie::where('movie_code', $movie_code)->first();

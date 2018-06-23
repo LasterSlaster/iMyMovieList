@@ -45,7 +45,7 @@ class SeenListController extends Controller
     {
         $this->validate($request, [
             'movie_code' => 'required|integer',
-            'movie_data' => 'required|string',
+            'movie_data' => 'required',
             'rating' => 'required|integer|max:5|min:1'
         ]);
 
