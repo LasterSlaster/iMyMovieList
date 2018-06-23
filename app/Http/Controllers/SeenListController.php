@@ -44,8 +44,8 @@ class SeenListController extends Controller
     public function store(Request $request, $nickname)
     {
         $this->validate($request, [
-            'movie_data' => 'required',
-            'movie_code' => 'required',
+            'movie_code' => 'required|integer',
+            'movie_data' => 'required|string',
             'rating' => 'required|integer|max:5|min:1'
         ]);
 
@@ -56,10 +56,8 @@ class SeenListController extends Controller
 
         //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
-        $seenList = SeenList::where('user_id', $user->id)->firstOrFail();
 
         $movie = Movie::where('movie_code', $request->movie_code)->first();
-
         if (is_null($movie)) {
             $movie = new Movie();
             $movie->movie_code = $request->movie_code;
@@ -68,7 +66,6 @@ class SeenListController extends Controller
         }
 
         $rating = UserMovieRating::where('user_id', $user->id)->where('movie_id', $movie->id)->first();
-
         if (is_null($rating)) {
             $rating = new UserMovieRating();
             $rating->user_id = $user->id;
@@ -77,6 +74,7 @@ class SeenListController extends Controller
         $rating->rating = $request->rating;
         $rating->save();
 
+        $seenList = SeenList::where('user_id', $user->id)->firstOrFail();
         $seenListMovie = SeenListMovie::where('seen_list_id', $seenList->id)->where('movie_id', $movie->id)->first();
         if (!is_null($seenListMovie))
             return Response::create('Resource is already present use PUT to update', 405)->header('Allow', 'PUT');
