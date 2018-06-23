@@ -56,7 +56,6 @@ class WatchListController extends Controller
         $watchList = WatchList::where('user_id', $user->id)->firstOrFail();
 
         $movie = Movie::where('movie_code', $request->movie_code)->first();
-        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
 
         if (is_null($movie)) {
             $movie = new Movie();
@@ -64,6 +63,8 @@ class WatchListController extends Controller
             $movie->movie_data = $request->movie_data;
             $movie->save();
         }
+
+        $watchListMovie = WatchListMovie::where('watch_list_id', $watchList->id)->where('movie_id', $movie->id)->first();
 
         if (!is_null($watchListMovie))
             return Response::create('Resource is already present use PUT to update', 405)->header('Allow', 'PUT');
