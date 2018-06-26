@@ -10,8 +10,8 @@ $factory->define(App\Movie::class, function (Faker $faker) {
         '{"id": 429351, "title": "Operation: 12 Strong", "cover": "http://image.tmdb.org/t/p/w342//j18021qCeRi3yUBtqd2UFj1c0RQ.jpg", "description": "Ein Team aus CIA-Agenten und Spezialeinheiten zieht nach den Anschlägen des 11. September in Afghanistan ein, um die Taliban zu zerschlagen."}',
         '{"id": 268896, "title": "Pacific Rim 2: Uprising", "cover": "http://image.tmdb.org/t/p/w342//v5HlmJK9bdeHxN2QhaFP1ivjX3U.jpg", "description": "Vor einiger Zeit sah es noch danach aus, als würde Jake Pentecost eine glorreiche Zukunft als Jaeger-Pilot beschieden sein, der mit seinen Fähigkeiten dabei hilft, die Menschheit vor den monströsen Kaiju zu beschützen. Damit hätte er in die Fußstapfen seines Vaters treten können, der einst den Widerstand gegen die Monster aus einer anderen Welt anführte. Aber weil dieser in seine Ziehtochter Mako mehr Hoffnungen legte und Jake dessen Erwartungen nie wirklich zu erfüllen vermochte, verabschiedete er sich vom Pilotentraining und landete in der Unterwelt, wo er sich zum Dieb und Schwarzmarkthändler mauserte. Doch die Welt braucht ihn: Eine nie zuvor gesehene Bedrohung schickt sich dazu an, Städte in Schutt und Asche zu legen und Mako führt eine neue Generation junger Jaeger-Piloten an, zu der sich auch Jake gesellen soll."}'];
     return [
-
-        'movie_code' => 333339,
+        [
+        'movie_code' => 284053,
         'movie_data' => json_decode('{
         "backdrop_path": "http://image.tmdb.org/t/p/w1280//kaIfm5ryEOwYg8mLbq8HkPuM1Fo.jpg",
         "genre_ids": [
@@ -44,7 +44,10 @@ $factory->define(App\Movie::class, function (Faker $faker) {
         "title": "Thor: Tag der Entscheidung",
         "vote_average": 7.4,
         "runtime": 130
-      }'),
-        'rating' => 2
+         }'),
+        'rating' => 2],
+        [
+  ,
+            "rating" => 2]
     ];
 });
