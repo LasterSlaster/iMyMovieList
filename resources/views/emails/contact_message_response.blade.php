@@ -1,4 +1,4 @@
-<h1>Deine Konstaktanfrage an IMyMovieList</h1>
+<h1>Deine Kontaktanfrage an iMyMovieList</h1>
 <p>Hallo {{$name}}</p>
 <p>Danke für deine Kontaktanfrage!</p>
 <p>Wir melden uns so schnell wie möglich bei dir.</p>
