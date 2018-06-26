@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\SeenListMovie;
+use App\Movie;
 
 class SeenListMoviesTableSeeder extends Seeder
 {
@@ -13,11 +14,12 @@ class SeenListMoviesTableSeeder extends Seeder
     public function run()
     {
         $seenListId = DB::table('seen_lists')->pluck('id');
+        $movie = Movie::where('movie_code', 383498)->firstOrFail();
 
-        $seenListId->each(function($u)  {
+        $seenListId->each(function($u) use ($movie) {
             $seenListMovie = new SeenListMovie();
             $seenListMovie->seen_list_id = $u;
-            $seenListMovie->movie_id = Movie::where('movie_code', 383498)->firstOrFail();
+            $seenListMovie->movie_id = $movie->id;
             $seenListMovie->save();
         });
     }

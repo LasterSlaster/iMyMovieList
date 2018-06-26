@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use App\WatchListMovie;
+use App\Movie;
 
 class WatchListMoviesTableSeeder extends Seeder
 {
@@ -13,11 +14,11 @@ class WatchListMoviesTableSeeder extends Seeder
     public function run()
     {
         $watchListId = DB::table('watch_lists')->pluck('id');
-
-        $watchListId->each(function($u)  {
+        $movie = Movie::where('movie_code', 284053)->firstOrFail();
+        $watchListId->each(function($u) use ($movie) {
            $watchListMovie = new WatchListMovie();
            $watchListMovie->watch_list_id = $u;
-           $watchListMovie->movie_id = Movie::where('movie_code', 284053)->firstOrFail();
+           $watchListMovie->movie_id = $movie->id;
            $watchListMovie->save();
         });
 
