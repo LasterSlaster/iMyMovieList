@@ -17,9 +17,9 @@ class UserMovieRatingsTableSeeder extends Seeder
         $seenlistMovies = SeenListMovie::all();
 
         $seenlistMovies->each(function($u) {
-            $seenlist = $u->seenlist();
+            $seenlist = $u->seenlist->user_id;
             $rating = new UserMovieRating();
-            $rating->user_id = $seenlist->user_id;
+            $rating->user_id = $seenlist;
             $rating->movie_id = $u->movie_id;
             $rating->rating = 2;
             $rating->save();
