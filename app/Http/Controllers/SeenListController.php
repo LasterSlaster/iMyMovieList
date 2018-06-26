@@ -54,7 +54,6 @@ class SeenListController extends Controller
         if ($authUser->nickname != $nickname)
             return Response::create('Not authorized to access this resource', 403);
 
-        //TODO: refactor this part. Vounerable because different id for same movie
         $user = User::where('nickname', $nickname)->firstOrFail();
 
         $movie = Movie::where('movie_code', $request->movie_code)->first();
