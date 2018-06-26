@@ -17,7 +17,7 @@ class SeenListMoviesTableSeeder extends Seeder
         $seenListId->each(function($u)  {
             $seenListMovie = new SeenListMovie();
             $seenListMovie->seen_list_id = $u;
-            $seenListMovie->movie_id = 383498;
+            $seenListMovie->movie_id = Movie::where('movie_code', 383498)->firstOrFail();
             $seenListMovie->save();
         });
     }
