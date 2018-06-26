@@ -1,11 +1,11 @@
 <?php
-
+/*
 $url = parse_url(getenv("DATABASE_URL"));
 $host = $url["host"]??null;
 $user = $url["user"]??null;
 $password = $url["pass"]??null;
 $database = substr($url["path"], 1)??null;
-
+*/
 return [
 
     /*
@@ -19,7 +19,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql_production'), //INFO: pgsql_production only for production (master branch) on heroku elsewhere use mysql
+    'default' => env('DB_CONNECTION', 'mysql'), //INFO: pgsql_production only for production (master branch) on heroku elsewhere use mysql
 
     /*
     |--------------------------------------------------------------------------
