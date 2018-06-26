@@ -9,6 +9,6 @@ $factory->define(App\UserMovieRating::class, function (Faker $faker) {
     return [
         'user_id' => $faker->randomElement($usersIDs),
         'movie_id' => $faker->randomElement($moviesIDs),
-        'rating' => $faker->numberBetween(1,5)
+        'rating' => $faker->numberBetween(2,4)
     ];
 });
