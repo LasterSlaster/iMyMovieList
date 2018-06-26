@@ -15,11 +15,9 @@ class SeenListMoviesTableSeeder extends Seeder
         $seenListId = DB::table('seen_lists')->pluck('id');
 
         $seenListId->each(function($u)  {
-            $faker = Faker\Factory::create();
-            $movieId = DB::table('movies')->pluck('id')->toArray();
             $seenListMovie = new SeenListMovie();
             $seenListMovie->seen_list_id = $u;
-            $seenListMovie->movie_id = $faker->randomElement($movieId);
+            $seenListMovie->movie_id = 383498;
             $seenListMovie->save();
         });
     }

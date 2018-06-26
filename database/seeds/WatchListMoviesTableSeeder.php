@@ -15,11 +15,9 @@ class WatchListMoviesTableSeeder extends Seeder
         $watchListId = DB::table('watch_lists')->pluck('id');
 
         $watchListId->each(function($u)  {
-            $faker = Faker\Factory::create();
-            $movieId = DB::table('movies')->pluck('id')->toArray();
            $watchListMovie = new WatchListMovie();
            $watchListMovie->watch_list_id = $u;
-           $watchListMovie->movie_id = $faker->randomElement($movieId);
+           $watchListMovie->movie_id = 284053;
            $watchListMovie->save();
         });
 
